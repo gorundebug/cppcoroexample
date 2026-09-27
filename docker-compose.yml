@@ -1,0 +1,246 @@
+services:
+  analyticsservice:
+    image: cppcoroexample-analyticsservice:${DOCKER_IMAGE_TAG:-local}
+    working_dir: /app
+    command:
+      - --config
+      - /app/config/config.yaml
+      - --values
+      - /app/config/overrides.yaml
+    stop_grace_period: 30000ms
+    restart: unless-stopped
+    environment:
+      - DEBUG=${ANALYTICS_SERVICE_DEBUG:-0}
+      - ANALYTICS_SERVICE_HTTP_PORT
+      - ANALYTICS_SERVICE_GRPC_PORT
+      - ANALYTICS_SERVICE_HTTP_HOST=0.0.0.0
+      - ANALYTICS_SERVICE_GRPC_HOST=0.0.0.0
+    ports:
+      - "${ANALYTICS_SERVICE_HOST_HTTP_PORT:-9093}:${ANALYTICS_SERVICE_HTTP_PORT:-9093}"
+      - "${ANALYTICS_SERVICE_HOST_GRPC_PORT:-9203}:${ANALYTICS_SERVICE_GRPC_PORT:-9203}"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    networks:
+      - app_net
+
+  automationservice:
+    image: automationservice:${DOCKER_IMAGE_TAG:-local}
+    restart: unless-stopped
+    environment:
+      - DEBUG=${AUTOMATION_SERVICE_DEBUG:-0}
+      - AUTOMATION_SERVICE_HTTP_PORT
+      - AUTOMATION_SERVICE_GRPC_PORT
+      - TEMPORAL_SDK_METRICS_BIND_ADDRESS=0.0.0.0:9464
+      - AUTOMATION_SERVICE_HTTP_HOST=0.0.0.0
+      - AUTOMATION_SERVICE_GRPC_HOST=0.0.0.0
+    ports:
+      - "${AUTOMATION_SERVICE_HOST_HTTP_PORT:-9094}:${AUTOMATION_SERVICE_HTTP_PORT:-9094}"
+      - "${AUTOMATION_SERVICE_HOST_GRPC_PORT:-9204}:${AUTOMATION_SERVICE_GRPC_PORT:-9204}"
+    depends_on:
+      temporal-create-namespace:
+        condition: service_completed_successfully
+    networks:
+      - app_net
+
+  inventoryservice:
+    image: cppcoroexample-inventoryservice:${DOCKER_IMAGE_TAG:-local}
+    working_dir: /app
+    command:
+      - --config
+      - /app/config/config.yaml
+      - --values
+      - /app/config/overrides.yaml
+    stop_grace_period: 30000ms
+    restart: unless-stopped
+    environment:
+      - DEBUG=${INVENTORY_SERVICE_DEBUG:-0}
+      - INVENTORY_SERVICE_HTTP_PORT
+      - INVENTORY_SERVICE_GRPC_PORT
+      - INVENTORY_SERVICE_HTTP_HOST=0.0.0.0
+      - INVENTORY_SERVICE_GRPC_HOST=0.0.0.0
+    ports:
+      - "${INVENTORY_SERVICE_HOST_HTTP_PORT:-9092}:${INVENTORY_SERVICE_HTTP_PORT:-9092}"
+      - "${INVENTORY_SERVICE_HOST_GRPC_PORT:-9202}:${INVENTORY_SERVICE_GRPC_PORT:-9202}"
+    networks:
+      - app_net
+
+  orderservice:
+    image: cppcoroexample-orderservice:${DOCKER_IMAGE_TAG:-local}
+    working_dir: /app
+    command:
+      - --config
+      - /app/config/config.yaml
+      - --values
+      - /app/config/overrides.yaml
+    stop_grace_period: 30000ms
+    restart: unless-stopped
+    environment:
+      - DEBUG=${ORDER_SERVICE_DEBUG:-0}
+      - ORDER_SERVICE_HTTP_PORT
+      - ORDER_SERVICE_GRPC_PORT
+      - ORDER_SERVICE_HTTP_HOST=0.0.0.0
+      - ORDER_SERVICE_GRPC_HOST=0.0.0.0
+      - INVENTORY_SERVICE_API_ADDRESS=dns:///inventoryservice:9202
+    ports:
+      - "${ORDER_SERVICE_HOST_HTTP_PORT:-9091}:${ORDER_SERVICE_HTTP_PORT:-9091}"
+      - "${ORDER_SERVICE_HOST_GRPC_PORT:-9201}:${ORDER_SERVICE_GRPC_PORT:-9201}"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    networks:
+      - app_net
+
+
+  redpanda:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/redpandadata/redpanda:v24.2.5
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --reserve-memory=0M
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr=internal://redpanda:9092,external://localhost:19092
+    ports:
+      - "${REDPANDA_PORT:-19092}:19092"
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health", "--exit-when-healthy"]
+      interval: 1s
+      timeout: 5s
+      retries: 30
+    networks:
+      - app_net
+
+
+  temporal-postgresql:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/postgres:16.4-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temporal"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 10s
+    volumes:
+      - temporal_postgresql_data:/var/lib/postgresql/data
+    networks:
+      - app_net
+
+  temporal-schema:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/temporalio/admin-tools:1.31.2
+    restart: "no"
+    depends_on:
+      temporal-postgresql:
+        condition: service_healthy
+    entrypoint: ["/bin/sh"]
+    command: /scripts/setup-postgres.generated.sh
+    environment:
+      DB_PORT: 5432
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      POSTGRES_SEEDS: temporal-postgresql
+    volumes:
+      - ./scripts/temporal:/scripts:ro
+    networks:
+      - app_net
+
+  temporal:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/temporalio/server:1.31.2
+    restart: unless-stopped
+    depends_on:
+      temporal-schema:
+        condition: service_completed_successfully
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      POSTGRES_SEEDS: temporal-postgresql
+      BIND_ON_IP: 0.0.0.0
+      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.generated.yaml
+      PROMETHEUS_ENDPOINT: 0.0.0.0:8000
+    ports:
+      - "${TEMPORAL_PORT:-7233}:7233"
+    volumes:
+      - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig:ro
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "7233"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 20s
+    networks:
+      - app_net
+
+  temporal-create-namespace:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/temporalio/admin-tools:1.31.2
+    restart: "no"
+    depends_on:
+      temporal:
+        condition: service_healthy
+    entrypoint: ["/bin/sh"]
+    command: /scripts/create-namespace.generated.sh
+    environment:
+      DEFAULT_NAMESPACE: default
+      TEMPORAL_ADDRESS: temporal:7233
+    volumes:
+      - ./scripts/temporal:/scripts:ro
+    networks:
+      - app_net
+
+  temporal-ui:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/temporalio/ui:2.53.2
+    restart: unless-stopped
+    depends_on:
+      temporal:
+        condition: service_healthy
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:${TEMPORAL_UI_PORT:-8080}
+    ports:
+      - "${TEMPORAL_UI_PORT:-8080}:8080"
+    networks:
+      - app_net
+
+  prometheus:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/prom/prometheus:v3.14.0
+    restart: unless-stopped
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - app_net
+
+  grafana:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/grafana/grafana:13.2.0
+    restart: unless-stopped
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./analyticsservice/grafana/dist:/etc/grafana/dashboards/analyticsservice:ro
+      - ./automationservice/grafana/dist:/etc/grafana/dashboards/automationservice:ro
+      - ./inventoryservice/grafana/dist:/etc/grafana/dashboards/inventoryservice:ro
+      - ./orderservice/grafana/dist:/etc/grafana/dashboards/orderservice:ro
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
+
+volumes:
+  grafana_data:
+  temporal_postgresql_data:

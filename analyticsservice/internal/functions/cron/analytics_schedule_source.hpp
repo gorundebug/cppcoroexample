@@ -1,0 +1,38 @@
+#pragma once
+
+#include <memory>
+
+#include <boost/asio/awaitable.hpp>
+#include <utility>
+
+#include <servicelib/runtime/common.hpp>
+#include <servicelib/runtime/config/endpoint_types.hpp>
+#include <servicelib/runtime/environment/environment.hpp>
+#include <servicelib/runtime/schedule.hpp>
+#include <example/model/types/automation_job.hpp>
+
+
+namespace example::analytics_service::functions {
+
+struct AnalyticsScheduleSource final {
+  template <typename Output>
+  boost::asio::awaitable<void> operator()(servicelib::MessageContext context,
+                  const servicelib::ScheduleTrigger& trigger,
+                  Output&& out) const {
+    co_await std::forward<Output>(out).out(
+        std::move(context),
+        "analytics:" + trigger.scheduleId + ":" + trigger.triggerId);
+  }
+};
+
+inline boost::asio::awaitable<std::unique_ptr<AnalyticsScheduleSource>> MakeAnalyticsScheduleSource(
+    servicelib::Context context, servicelib::IServiceEnvironment& environment,
+    const auto& config) {
+  (void)config;
+  (void)context;
+
+  (void)environment;
+  co_return std::make_unique<AnalyticsScheduleSource>();
+}
+
+}  // namespace example::analytics_service::functions

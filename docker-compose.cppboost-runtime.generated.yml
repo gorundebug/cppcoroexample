@@ -1,0 +1,43 @@
+services:
+  analyticsservice:
+    image: cppcoroexample-analyticsservice:${DOCKER_IMAGE_TAG:-local}
+    working_dir: /app
+    command:
+      - --config
+      - /app/config/config.yaml
+      - --values
+      - /app/config/overrides.yaml
+    volumes: !reset []
+    security_opt: !reset []
+    cap_add: !reset []
+    ports: !override
+      - "${ANALYTICS_SERVICE_HOST_HTTP_PORT:-9093}:${ANALYTICS_SERVICE_HTTP_PORT:-9093}"
+      - "${ANALYTICS_SERVICE_HOST_GRPC_PORT:-9203}:${ANALYTICS_SERVICE_GRPC_PORT:-9203}"
+  inventoryservice:
+    image: cppcoroexample-inventoryservice:${DOCKER_IMAGE_TAG:-local}
+    working_dir: /app
+    command:
+      - --config
+      - /app/config/config.yaml
+      - --values
+      - /app/config/overrides.yaml
+    volumes: !reset []
+    security_opt: !reset []
+    cap_add: !reset []
+    ports: !override
+      - "${INVENTORY_SERVICE_HOST_HTTP_PORT:-9092}:${INVENTORY_SERVICE_HTTP_PORT:-9092}"
+      - "${INVENTORY_SERVICE_HOST_GRPC_PORT:-9202}:${INVENTORY_SERVICE_GRPC_PORT:-9202}"
+  orderservice:
+    image: cppcoroexample-orderservice:${DOCKER_IMAGE_TAG:-local}
+    working_dir: /app
+    command:
+      - --config
+      - /app/config/config.yaml
+      - --values
+      - /app/config/overrides.yaml
+    volumes: !reset []
+    security_opt: !reset []
+    cap_add: !reset []
+    ports: !override
+      - "${ORDER_SERVICE_HOST_HTTP_PORT:-9091}:${ORDER_SERVICE_HTTP_PORT:-9091}"
+      - "${ORDER_SERVICE_HOST_GRPC_PORT:-9201}:${ORDER_SERVICE_GRPC_PORT:-9201}"

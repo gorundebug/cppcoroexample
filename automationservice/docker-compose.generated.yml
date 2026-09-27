@@ -1,0 +1,27 @@
+services:
+  automationservice:
+    image: automationservice:${DOCKER_IMAGE_TAG:-local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+      args:
+        DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
+        GOPROXY: ${GOPROXY:-https://proxy.golang.org,direct}
+        GOSUMDB: ${GOSUMDB:-sum.golang.org}
+        RUNTIME_STRIP: ${RUNTIME_STRIP:-ON}
+        DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-https://github.com}
+        DEPENDENCY_APT_DEBIAN_URL: ${DEPENDENCY_APT_DEBIAN_URL:-}
+        DEPENDENCY_APT_DEBIAN_SECURITY_URL: ${DEPENDENCY_APT_DEBIAN_SECURITY_URL:-}
+      additional_contexts:
+        servicelib-source: "${GOSERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/servicelib.git#v0.2.145}"
+        module-model_go-source: "${MODEL_GO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.145}"
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - AUTOMATION_SERVICE_HTTP_PORT
+      - AUTOMATION_SERVICE_GRPC_PORT
+    ports:
+      - "${AUTOMATION_SERVICE_HOST_HTTP_PORT:-9094}:${AUTOMATION_SERVICE_HTTP_PORT:-9094}"
+      - "${AUTOMATION_SERVICE_HOST_GRPC_PORT:-9204}:${AUTOMATION_SERVICE_GRPC_PORT:-9204}"

@@ -1,0 +1,26 @@
+services:
+  analyticsservice:
+    image: analyticsservice-cpp-build:local
+    working_dir: /workspace/source
+    command:
+      - /bin/sh
+      - -c
+      - |
+        if [ "$${DEBUG:-0}" = "1" ]; then
+          exec gdbserver :2345 /workspace/build/example_analytics_service --config /workspace/source/config/config.yaml --values /workspace/source/config/overrides.integration.generated.yaml
+        fi
+        exec /workspace/build/example_analytics_service --config /workspace/source/config/config.yaml --values /workspace/source/config/overrides.integration.generated.yaml
+    ports:
+      - "${DEBUG_PORT:-2345}:2345"
+    volumes:
+      - .:/workspace/source:ro
+      - cpp-dev-cmake-build:/workspace/build
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
+
+volumes:
+  cpp-dev-cmake-build:
+    name: cppcoroexample_analyticsservice_cpp-cmake-build
+    external: true

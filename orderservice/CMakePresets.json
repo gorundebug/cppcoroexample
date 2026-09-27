@@ -1,0 +1,104 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "host-debug",
+      "displayName": "Host debug (optional fast path)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/host",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "FETCH_CPP_DEPENDENCIES": "ON",
+        "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
+      }
+    },
+    {
+      "name": "host-release",
+      "displayName": "Host release (optional fast path)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/host",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
+        "FETCH_CPP_DEPENDENCIES": "ON",
+        "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
+      }
+    },
+    {
+      "name": "docker-debug",
+      "displayName": "Docker debug",
+      "generator": "Ninja",
+      "binaryDir": "/workspace/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "FETCH_CPP_DEPENDENCIES": "OFF",
+        "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
+      }
+    },
+    {
+      "name": "docker-release",
+      "displayName": "Docker release",
+      "generator": "Ninja",
+      "binaryDir": "/workspace/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
+        "FETCH_CPP_DEPENDENCIES": "OFF",
+        "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug"
+    },
+    {
+      "name": "host-release",
+      "configurePreset": "host-release"
+    },
+    {
+      "name": "docker-debug",
+      "configurePreset": "docker-debug"
+    },
+    {
+      "name": "docker-release",
+      "configurePreset": "docker-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "host-debug",
+      "configurePreset": "host-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "host-release",
+      "configurePreset": "host-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "docker-debug",
+      "configurePreset": "docker-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "docker-release",
+      "configurePreset": "docker-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

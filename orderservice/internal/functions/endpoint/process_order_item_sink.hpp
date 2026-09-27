@@ -1,0 +1,116 @@
+#pragma once
+
+#include <memory>
+
+#include <boost/asio/awaitable.hpp>
+
+#include <exception>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <variant>
+
+#include <servicelib/runtime/common.hpp>
+#include <servicelib/runtime/config/endpoint_types.hpp>
+#include <servicelib/runtime/environment/environment.hpp>
+#include <example/model/types/order_item.hpp>
+#include <example/model/types/order_item_result.hpp>
+#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
+
+
+namespace example::order_service::functions {
+
+// User-owned transport mapping. The generated endpoint owns request
+// correlation, cancellation, metrics and graceful shutdown.
+struct ProcessOrderItemSink final {
+  struct State final {
+    std::string order_id;
+    std::string item_id;
+    std::string sku;
+    std::int32_t requested_qty{0};
+    double unit_price{0.0};
+  };
+
+  boost::asio::awaitable<servicelib::BeginResult<State>> beginRequest(
+      servicelib::MessageContext context, auto&) const {
+    co_return servicelib::BeginResult<State>{std::move(context), State{}};
+  }
+
+  boost::asio::awaitable<void> consumeMessage(
+      servicelib::MessageContext context, auto& stream_context,
+      State& state, const example::model::types::OrderItem& value,
+      auto& sender, auto result_context) const {
+    (void)context;
+    (void)stream_context;
+    (void)result_context;
+    state.order_id = value.order_id;
+    state.item_id = value.item_id;
+    state.sku = value.sku;
+    state.requested_qty = value.quantity;
+    state.unit_price = value.unit_price;
+
+    inventoryserviceapi::processorderitem::ProcessOrderItemRequest request;
+    request.set_order_id(value.order_id);
+    request.set_item_id(value.item_id);
+    request.set_sku(value.sku);
+    request.set_quantity(value.quantity);
+    co_await sender.send(std::move(request));
+  }
+
+  boost::asio::awaitable<void> handleResponse(
+      servicelib::MessageContext context, auto& stream_context, State& state,
+      const inventoryserviceapi::processorderitem::ProcessOrderItemResponse& response) const {
+    co_await stream_context.collect(
+        std::move(context),
+        example::model::types::OrderItemResult{
+            state.order_id,
+            state.item_id,
+            state.sku,
+            state.requested_qty,
+            response.available_qty(),
+            response.reserved(),
+            response.status(),
+            state.unit_price,
+            {},
+        });
+  }
+
+  boost::asio::awaitable<void> endRequest(servicelib::MessageContext context, auto& stream_context,
+                  std::exception_ptr error, State& state) const {
+    if (!error) co_return;
+    try {
+      std::string message{"unknown processing error"};
+      try {
+        std::rethrow_exception(error);
+      } catch (const std::exception& exception) {
+        message = exception.what();
+      } catch (...) {
+      }
+      co_await stream_context.collect(
+          std::move(context),
+          example::model::types::OrderItemResult{
+              state.order_id,
+              state.item_id,
+              state.sku,
+              state.requested_qty,
+              0,
+              false,
+              "PROCESSING_ERROR",
+              state.unit_price,
+              std::move(message),
+          });
+    } catch (...) {
+      // Preserve best-effort error delivery; downstream shutdown must continue.
+    }
+  }
+};
+
+inline boost::asio::awaitable<std::unique_ptr<ProcessOrderItemSink>> MakeProcessOrderItemSink(
+    servicelib::Context context, servicelib::IServiceEnvironment& environment,
+    const auto& config) {
+  (void)config;
+  (void)context; (void)environment;
+  co_return std::make_unique<ProcessOrderItemSink>();
+}
+
+}  // namespace example::order_service::functions

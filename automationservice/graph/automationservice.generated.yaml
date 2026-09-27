@@ -1,0 +1,766 @@
+dataConnectors:
+    localCron:
+        endpoints:
+            localSchedule:
+                enabled: true
+                functionDescription: |
+                    Create a job message identifying the local scheduled firing.
+                functionInitializerGroup: ""
+                functionName: LocalSchedule
+                functionPackage: cron
+                missedRunPolicy: FireOnce
+                name: Local Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/5 * * * *'
+                timezone: UTC
+                tracingEnabled: false
+        goImplementation: go/gocron
+        name: Local Cron
+        pythonImplementation: python/apscheduler
+        rustImplementation: rust/croner
+        type: Cron
+        typeScriptImplementation: node/croner
+    temporal:
+        address: temporal:7233
+        apiKey: ""
+        endpoints:
+            activityJob:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: ActivityJobEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Activity Job
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutActivityA:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutActivityAEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Activity A
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutActivityB:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutActivityBEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Activity B
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutActivityC:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutActivityCEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 1
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Activity C
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-heavy-activities
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutWorkflowJob:
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutWorkflowJobEndpoint
+                functionPackage: workflow
+                maxConcurrentWorkflowTasks: 4
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Workflow Job
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-workflow-jobs
+                temporalExecutionType: Workflow
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            sequentialActivityA:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: SequentialActivityAEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Sequential Activity A
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            sequentialActivityB:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: SequentialActivityBEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Sequential Activity B
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            temporalActivitySchedule:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: |
+                    Create an Activity job message identifying the durable scheduled firing.
+                functionInitializerGroup: ""
+                functionName: TemporalActivitySchedule
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Temporal Activity Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/10 * * * *'
+                scheduleId: example-automation-activity-schedule
+                taskQueue: automation-activity-schedules
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            temporalWorkflowSchedule:
+                enabled: true
+                functionDescription: |
+                    Create a Workflow job message identifying the durable scheduled firing.
+                functionInitializerGroup: ""
+                functionName: TemporalWorkflowSchedule
+                functionPackage: workflow
+                maxConcurrentWorkflowTasks: 4
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Temporal Workflow Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/10 * * * *'
+                scheduleId: example-automation-workflow-schedule
+                taskQueue: automation-workflow-schedules
+                temporalExecutionType: Workflow
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            workflowJob:
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: WorkflowJobEndpoint
+                functionPackage: workflow
+                maxConcurrentWorkflowTasks: 4
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Workflow Job
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-workflow-jobs
+                temporalExecutionType: Workflow
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+        goImplementation: temporal/go
+        identity: example-automation
+        name: Temporal
+        namespace: default
+        pythonImplementation: temporal/python
+        tlsEnabled: false
+        type: Temporal
+        typeScriptImplementation: temporal/typescript
+        workerStopTimeout: 5000
+pools:
+    defaultPool:
+        executorsCount: 2
+        name: Default Pool
+services:
+    automationService:
+        appearance:
+            color: '#00A86B'
+            pipelines:
+                automation:
+                    activityPause:
+                        x: -251
+                        "y": 219
+                    callFanOutActivityA:
+                        x: -271
+                        "y": 1284
+                    callFanOutActivityB:
+                        x: 7
+                        "y": 990
+                    callFanOutActivityC:
+                        x: 317
+                        "y": 1313
+                    callSequentialActivityA:
+                        x: 49
+                        "y": 473
+                    callSequentialActivityB:
+                        x: 270
+                        "y": 650
+                    consumeActivityJob:
+                        x: -500
+                        "y": 350
+                    consumeFanOutActivityA:
+                        x: -277
+                        "y": 1051
+                    consumeFanOutActivityB:
+                        x: 295
+                        "y": 996
+                    consumeFanOutActivityC:
+                        x: 553
+                        "y": 1503
+                    consumeFanOutWorkflowJob:
+                        x: -635
+                        "y": 1287
+                    consumeSequentialActivityA:
+                        x: 302
+                        "y": 489
+                    consumeSequentialActivityB:
+                        x: 503
+                        "y": 658
+                    consumeWorkflowJob:
+                        x: -515
+                        "y": 635
+                    localSchedule:
+                        x: -1250
+                        "y": 500
+                    observeActivityResult:
+                        x: -500
+                        "y": 500
+                    observeFanOutActivityB:
+                        x: -11
+                        "y": 793
+                    observeFanOutActivityC:
+                        x: 587
+                        "y": 1121
+                    observeWorkflowResult:
+                        x: -650
+                        "y": 788
+                    processActivityJob:
+                        x: 10
+                        "y": 350
+                    processFanOutActivityA:
+                        x: -268
+                        "y": 819
+                    processFanOutActivityB:
+                        x: 705
+                        "y": 1001
+                    processFanOutActivityC:
+                        x: 931
+                        "y": 1493
+                    processScheduledActivity:
+                        x: -1442
+                        "y": 655
+                    processScheduledWorkflow:
+                        x: -1411
+                        "y": 856
+                    processSequentialActivityA:
+                        x: 568
+                        "y": 486
+                    processSequentialActivityB:
+                        x: 804
+                        "y": 660
+                    processWorkflowJob:
+                        x: -59
+                        "y": 654
+                    scheduledActivityPause:
+                        x: -1661
+                        "y": 402
+                    scheduledWorkflowPause:
+                        x: -1684
+                        "y": 1167
+                    splitActivityAResult:
+                        x: 40
+                        "y": 1312
+                    splitOnDemandJobs:
+                        x: -1010
+                        "y": 500
+                    submitActivityJob:
+                        x: -760
+                        "y": 350
+                    submitFanOutWorkflowJob:
+                        x: -967
+                        "y": 1034
+                    submitWorkflowJob:
+                        x: -807
+                        "y": 629
+                    temporalActivitySchedule:
+                        x: -1917
+                        "y": 639
+                    temporalWorkflowSchedule:
+                        x: -1906
+                        "y": 846
+                    workflowPause:
+                        x: -233
+                        "y": 504
+        defaultCallSemantics: FunctionCall
+        environment: ""
+        golangVersion: 1.25.4
+        grpcHost: 0.0.0.0
+        grpcPort: 9204
+        httpHost: 0.0.0.0
+        httpPort: 9094
+        kubernetesWorkloadType: Deployment
+        links:
+            link1:
+                callSemantics: FunctionCall
+                from: callSequentialActivityA
+                poolName: Default Pool
+                priority: 2
+                to: callSequentialActivityB
+            link2:
+                callSemantics: FunctionCall
+                from: callSequentialActivityB
+                poolName: Default Pool
+                to: processWorkflowJob
+            link3:
+                callSemantics: FunctionCall
+                from: consumeActivityJob
+                to: activityPause
+            link4:
+                callSemantics: FunctionCall
+                from: consumeFanOutActivityA
+                to: processFanOutActivityA
+            link5:
+                callSemantics: FunctionCall
+                from: consumeFanOutActivityB
+                to: processFanOutActivityB
+            link6:
+                callSemantics: FunctionCall
+                from: consumeFanOutActivityC
+                to: processFanOutActivityC
+            link7:
+                callSemantics: FunctionCall
+                from: consumeFanOutWorkflowJob
+                poolName: Default Pool
+                to: callFanOutActivityA
+            link8:
+                callSemantics: FunctionCall
+                from: consumeSequentialActivityA
+                to: processSequentialActivityA
+            link9:
+                callSemantics: FunctionCall
+                from: consumeSequentialActivityB
+                to: processSequentialActivityB
+            link10:
+                callSemantics: FunctionCall
+                from: consumeWorkflowJob
+                to: workflowPause
+            link11:
+                callSemantics: FunctionCall
+                from: splitActivityAResult
+                poolName: Default Pool
+                priority: 2
+                to: callFanOutActivityB
+            link12:
+                callSemantics: FunctionCall
+                from: splitActivityAResult
+                poolName: Default Pool
+                priority: 7
+                to: callFanOutActivityC
+            link13:
+                callSemantics: FunctionCall
+                from: workflowPause
+                poolName: Default Pool
+                to: callSequentialActivityA
+        livenessHandler: health/live
+        metricsHandler: metrics
+        modulePath: github.com/gorundebug/cppcoroexample-automationservice
+        name: Automation Service
+        pipelines:
+            automation:
+                activityPause:
+                    duration: 250
+                    functionDescription: |
+                        Apply the ordinary local Delay while processing an on-demand Temporal Activity.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ActivityPause
+                    functionPackage: automation
+                    name: Activity Pause
+                    source: consumeActivityJob
+                    type: Delay
+                callFanOutActivityA:
+                    endpoint: fanOutActivityA
+                    name: Call Fan-Out Activity A
+                    source: consumeFanOutWorkflowJob
+                    type: Sink
+                    valueType: automationJob
+                callFanOutActivityB:
+                    endpoint: fanOutActivityB
+                    name: Call Fan-Out Activity B
+                    source: splitActivityAResult
+                    type: Sink
+                    valueType: automationJob
+                callFanOutActivityC:
+                    endpoint: fanOutActivityC
+                    name: Call Fan-Out Activity C
+                    source: splitActivityAResult
+                    type: Sink
+                    valueType: automationJob
+                callSequentialActivityA:
+                    endpoint: sequentialActivityA
+                    name: Call Sequential Activity A
+                    source: workflowPause
+                    type: Sink
+                    valueType: automationJob
+                callSequentialActivityB:
+                    endpoint: sequentialActivityB
+                    name: Call Sequential Activity B
+                    source: callSequentialActivityA
+                    type: Sink
+                    valueType: automationJob
+                consumeActivityJob:
+                    endpoint: activityJob
+                    name: Consume Activity Job
+                    source: processActivityJob
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutActivityA:
+                    endpoint: fanOutActivityA
+                    name: Consume Fan-Out Activity A
+                    source: processFanOutActivityA
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutActivityB:
+                    endpoint: fanOutActivityB
+                    name: Consume Fan-Out Activity B
+                    source: processFanOutActivityB
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutActivityC:
+                    endpoint: fanOutActivityC
+                    name: Consume Fan-Out Activity C
+                    source: processFanOutActivityC
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutWorkflowJob:
+                    endpoint: fanOutWorkflowJob
+                    name: Consume Fan-Out Workflow Job
+                    type: Input
+                    valueType: automationJob
+                consumeSequentialActivityA:
+                    endpoint: sequentialActivityA
+                    name: Consume Sequential Activity A
+                    source: processSequentialActivityA
+                    type: Input
+                    valueType: automationJob
+                consumeSequentialActivityB:
+                    endpoint: sequentialActivityB
+                    name: Consume Sequential Activity B
+                    source: processSequentialActivityB
+                    type: Input
+                    valueType: automationJob
+                consumeWorkflowJob:
+                    endpoint: workflowJob
+                    name: Consume Workflow Job
+                    source: processWorkflowJob
+                    type: Input
+                    valueType: automationJob
+                localSchedule:
+                    endpoint: localSchedule
+                    name: Local Schedule
+                    type: Input
+                    valueType: automationJob
+                observeActivityResult:
+                    functionDescription: |
+                        Preserve the result returned through the on-demand Activity endpoint.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveActivityResult
+                    functionPackage: automation
+                    name: Observe Activity Result
+                    source: submitActivityJob
+                    type: Map
+                    valueType: automationJob
+                observeFanOutActivityB:
+                    functionDescription: |
+                        Observe the typed result returned by the Activity B fan-out branch.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveFanoutActivityB
+                    functionPackage: automation
+                    name: Observe Fan-Out Activity B
+                    source: callFanOutActivityB
+                    type: Map
+                    valueType: automationJob
+                observeFanOutActivityC:
+                    functionDescription: |
+                        Observe the typed result returned by the Activity C fan-out branch.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveFanoutActivityC
+                    functionPackage: automation
+                    name: Observe Fan-Out Activity C
+                    source: callFanOutActivityC
+                    type: Map
+                    valueType: automationJob
+                observeWorkflowResult:
+                    functionDescription: |
+                        Preserve the result returned through the on-demand Workflow endpoint.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveWorkflowResult
+                    functionPackage: automation
+                    name: Observe Workflow Result
+                    source: submitWorkflowJob
+                    type: Map
+                    valueType: automationJob
+                processActivityJob:
+                    functionDescription: |
+                        Record Activity progress with DurableCallHeartbeat and return the processed job result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessActivityJob
+                    functionPackage: automation
+                    name: Process Activity Job
+                    source: activityPause
+                    type: Map
+                    valueType: automationJob
+                processFanOutActivityA:
+                    functionDescription: |
+                        Return Activity A's typed result before the Workflow Split.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessFanoutActivityA
+                    functionPackage: automation
+                    name: Process Fan-Out Activity A
+                    source: consumeFanOutActivityA
+                    type: Map
+                    valueType: automationJob
+                processFanOutActivityB:
+                    functionDescription: |
+                        Return Activity B's typed fan-out result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessFanoutActivityB
+                    functionPackage: automation
+                    name: Process Fan-Out Activity B
+                    source: consumeFanOutActivityB
+                    type: Map
+                    valueType: automationJob
+                processFanOutActivityC:
+                    functionDescription: |
+                        Return Activity C's typed fan-out result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessFanoutActivityC
+                    functionPackage: automation
+                    name: Process Fan-Out Activity C
+                    source: consumeFanOutActivityC
+                    type: Map
+                    valueType: automationJob
+                processScheduledActivity:
+                    functionDescription: |
+                        Return the visible result of one scheduled Activity execution.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessScheduledActivity
+                    functionPackage: automation
+                    name: Process Scheduled Activity
+                    source: scheduledActivityPause
+                    type: Map
+                    valueType: automationJob
+                processScheduledWorkflow:
+                    functionDescription: |
+                        Return the visible result of one scheduled Workflow execution.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessScheduledWorkflow
+                    functionPackage: automation
+                    name: Process Scheduled Workflow
+                    source: scheduledWorkflowPause
+                    type: Map
+                    valueType: automationJob
+                processSequentialActivityA:
+                    functionDescription: |
+                        Return sequential Activity A's typed result to its Temporal sink.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessSequentialActivityA
+                    functionPackage: automation
+                    name: Process Sequential Activity A
+                    source: consumeSequentialActivityA
+                    type: Map
+                    valueType: automationJob
+                processSequentialActivityB:
+                    functionDescription: |
+                        Return sequential Activity B's typed result to its Temporal sink.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessSequentialActivityB
+                    functionPackage: automation
+                    name: Process Sequential Activity B
+                    source: consumeSequentialActivityB
+                    type: Map
+                    valueType: automationJob
+                processWorkflowJob:
+                    functionDescription: |
+                        Continue the Workflow as new once, then return its final result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessWorkflowJob
+                    functionPackage: automation
+                    name: Process Workflow Job
+                    source: callSequentialActivityB
+                    type: Map
+                    valueType: automationJob
+                scheduledActivityPause:
+                    duration: 250
+                    functionDescription: |
+                        Apply the ordinary local Delay inside an Activity started by Temporal Schedule.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ScheduledActivityPause
+                    functionPackage: automation
+                    name: Scheduled Activity Pause
+                    source: temporalActivitySchedule
+                    type: Delay
+                scheduledWorkflowPause:
+                    duration: 250
+                    functionDescription: |
+                        Use the official Temporal Workflow timer for a scheduled Workflow.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ScheduledWorkflowPause
+                    functionPackage: automation
+                    name: Scheduled Workflow Pause
+                    source: temporalWorkflowSchedule
+                    type: Delay
+                splitActivityAResult:
+                    name: Split Activity A Result
+                    source: callFanOutActivityA
+                    type: Split
+                splitOnDemandJobs:
+                    name: Split On-Demand Jobs
+                    source: localSchedule
+                    type: Split
+                submitActivityJob:
+                    endpoint: activityJob
+                    name: Submit Activity Job
+                    source: splitOnDemandJobs
+                    type: Sink
+                    valueType: automationJob
+                submitFanOutWorkflowJob:
+                    endpoint: fanOutWorkflowJob
+                    name: Submit Fan-Out Workflow Job
+                    source: splitOnDemandJobs
+                    type: Sink
+                    valueType: automationJob
+                submitWorkflowJob:
+                    endpoint: workflowJob
+                    name: Submit Workflow Job
+                    source: splitOnDemandJobs
+                    type: Sink
+                    valueType: automationJob
+                temporalActivitySchedule:
+                    endpoint: temporalActivitySchedule
+                    name: Temporal Activity Schedule
+                    source: processScheduledActivity
+                    type: Input
+                    valueType: automationJob
+                temporalWorkflowSchedule:
+                    endpoint: temporalWorkflowSchedule
+                    name: Temporal Workflow Schedule
+                    source: processScheduledWorkflow
+                    type: Input
+                    valueType: automationJob
+                workflowPause:
+                    duration: 250
+                    functionDescription: |
+                        Use the same Delay contract backed by the Temporal Workflow timer.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: WorkflowPause
+                    functionPackage: automation
+                    name: Workflow Pause
+                    source: consumeWorkflowJob
+                    type: Delay
+        programmingLanguage: GoLang
+        readinessHandler: health/ready
+        shutdownTimeout: 30000
+        startupHandler: health/startup
+        statusHandler: status
+settings:
+    moduleVersion: v0.2.145
+    name: Example
+    repoPath: github.com/gorundebug/cppcoroexample
+types:
+    automationJob:
+        description: Automation job payload and result.
+        module: model
+        name: AutomationJob
+        publicType: true
+        type: string
+        useAlias: false

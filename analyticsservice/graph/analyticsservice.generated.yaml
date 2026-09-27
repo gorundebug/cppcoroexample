@@ -1,0 +1,564 @@
+dataConnectors:
+    analyticsFunctions:
+        endpoints:
+            analyticsOrders:
+                functionDescription: Produce a deterministic order analytics event for the canonical join examples.
+                functionInitializerGroup: ""
+                functionName: AnalyticsOrders
+                functionPackage: endpoint
+                name: Analytics Orders
+                publicFunction: false
+            analyticsPayments:
+                functionDescription: Produce a deterministic payment analytics event for the canonical join examples.
+                functionInitializerGroup: ""
+                functionName: AnalyticsPayments
+                functionPackage: endpoint
+                name: Analytics Payments
+                publicFunction: false
+            analyticsShipments:
+                functionDescription: Produce a deterministic shipment analytics event for the canonical multi-way join example.
+                functionInitializerGroup: ""
+                functionName: AnalyticsShipments
+                functionPackage: endpoint
+                name: Analytics Shipments
+                publicFunction: false
+            cycleAnalyticsInput:
+                functionDescription: Produce one deterministic analytics event that exercises the finite feedback cycle.
+                functionInitializerGroup: ""
+                functionName: CycleAnalyticsInput
+                functionPackage: endpoint
+                name: Cycle Analytics Input
+                publicFunction: false
+            cycleAnalyticsResult:
+                functionDescription: Validate the terminal event emitted after three passes through the feedback cycle.
+                functionInitializerGroup: ""
+                functionName: CycleAnalyticsResult
+                functionPackage: endpoint
+                name: Cycle Analytics Result
+                publicFunction: false
+            highValueAnalytics:
+                functionDescription: Validate and record analytics results routed to the high-value Case branch.
+                functionInitializerGroup: ""
+                functionName: HighValueAnalytics
+                functionPackage: endpoint
+                name: High Value Analytics
+                publicFunction: false
+            joinedAnalytics:
+                functionDescription: Validate and record the result of the two-way analytics join.
+                functionInitializerGroup: ""
+                functionName: JoinedAnalytics
+                functionPackage: endpoint
+                name: Joined Analytics
+                publicFunction: false
+            standardAnalytics:
+                functionDescription: Validate and record analytics results routed to the standard Case branch.
+                functionInitializerGroup: ""
+                functionName: StandardAnalytics
+                functionPackage: endpoint
+                name: Standard Analytics
+                publicFunction: false
+            substreamAnalyticsInput:
+                functionDescription: Produce one deterministic analytics event that invokes the service-local SubStream example.
+                functionInitializerGroup: ""
+                functionName: SubstreamAnalyticsInput
+                functionPackage: endpoint
+                name: Substream Analytics Input
+                publicFunction: false
+            substreamAnalyticsResult:
+                functionDescription: Validate and record the result returned by the service-local SubStream example.
+                functionInitializerGroup: ""
+                functionName: SubstreamAnalyticsResult
+                functionPackage: endpoint
+                name: Substream Analytics Result
+                publicFunction: false
+        implementation: function
+        name: Analytics Functions
+        type: Custom
+    localCron:
+        endpoints:
+            analyticsSchedule:
+                enabled: true
+                functionDescription: |
+                    Create an analytics job message identifying the local scheduled firing.
+                functionInitializerGroup: ""
+                functionName: AnalyticsSchedule
+                functionPackage: cron
+                missedRunPolicy: FireOnce
+                name: Analytics Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/5 * * * *'
+                timezone: UTC
+                tracingEnabled: false
+        goImplementation: go/gocron
+        name: Local Cron
+        pythonImplementation: python/apscheduler
+        rustImplementation: rust/croner
+        type: Cron
+        typeScriptImplementation: node/croner
+    orderEvents:
+        brokers: redpanda:9092
+        dialTimeout: 5000
+        endpoints:
+            orderProcessed:
+                consumerGroup: analytics-service
+                createTopic: true
+                enabled: true
+                functionDescription: |
+                    Exchange OrderProcessed events keyed by order ID.
+                    Producers include the final status, processing time, total and confirmed item counts, and a failure reason for unsuccessful orders.
+                    Consumers decode the event and mark its Kafka message processed only after the pipeline handles it successfully.
+                functionInitializerGroup: ""
+                functionName: OrderProcessedEndpoint
+                functionPackage: endpoint
+                name: Order Processed
+                partitions: 1
+                publicFunction: false
+                replicationFactor: 1
+                topic: order-processed
+        goImplementation: IBM/Sarama
+        name: Order Events
+        password: ""
+        pythonImplementation: aiokafka
+        rustImplementation: rust/rdkafka
+        saslMechanism: SCRAM-SHA-512
+        securityProtocol: PLAINTEXT
+        type: Kafka
+        typeScriptImplementation: confluent/kafka-javascript
+        username: ""
+        version: 2.8.0
+services:
+    analyticsService:
+        appearance:
+            color: '#05ABF7'
+            pipelines:
+                analytics:
+                    analyticsSchedule:
+                        x: -1905
+                        "y": -497
+                    consumeOrderProcessed:
+                        x: -1453
+                        "y": -510
+                    countOrderProcessed:
+                        x: -1695
+                        "y": -518
+                analyticsSources:
+                    analyticsOrders:
+                        x: -1739
+                        "y": -1133
+                    analyticsPayments:
+                        x: -2307
+                        "y": -767
+                    analyticsShipments:
+                        x: 12
+                        "y": -1308
+                    splitAnalyticsOrders:
+                        x: -1529
+                        "y": -1100
+                    splitAnalyticsPayments:
+                        x: -1945
+                        "y": -776
+                cycleAnalytics:
+                    advanceCycleAnalytics:
+                        x: -1502
+                        "y": -1648
+                    completeCycleAnalytics:
+                        x: -529
+                        "y": -1718
+                    continueCycleAnalytics:
+                        x: -879
+                        "y": -2196
+                    cycleAnalyticsInput:
+                        x: -2362
+                        "y": -1830
+                    cycleAnalyticsLink:
+                        x: -1311
+                        "y": -2114
+                    mergeCycleAnalytics:
+                        x: -1830
+                        "y": -1827
+                    splitCycleAnalytics:
+                        x: -830
+                        "y": -1687
+                    writeCycleAnalytics:
+                        x: -545
+                        "y": -2204
+                joinAnalytics:
+                    joinOrderPaymentAnalytics:
+                        x: -637
+                        "y": -1050
+                    keyOrdersForJoin:
+                        x: -1258
+                        "y": -1007
+                    keyPaymentsForJoin:
+                        x: -1377
+                        "y": -723
+                    writeJoinedAnalytics:
+                        x: -231
+                        "y": -1079
+                multiJoinAnalytics:
+                    highValueAnalytics:
+                        x: 398
+                        "y": -1650
+                    keyOrdersForMultiJoin:
+                        x: -1325
+                        "y": -1256
+                    keyPaymentsForMultiJoin:
+                        x: -1984
+                        "y": -1293
+                    keyShipmentsForMultiJoin:
+                        x: -365
+                        "y": -1315
+                    multiJoinAnalyticsEvents:
+                        x: -812
+                        "y": -1446
+                    routeAnalyticsResult:
+                        x: -89
+                        "y": -1589
+                    standardAnalytics:
+                        x: 463
+                        "y": -1449
+                    writeHighValueAnalytics:
+                        x: 820
+                        "y": -1669
+                    writeStandardAnalytics:
+                        x: 966
+                        "y": -1453
+                substreamAnalytics:
+                    analyzeAnalyticsSubstream:
+                        x: -1740
+                        "y": -2860
+                    buildSubstreamAnalyticsResult:
+                        x: -1110
+                        "y": -2860
+                    invokeAnalyticsSubstream:
+                        x: -1740
+                        "y": -2530
+                    substreamAnalyticsInput:
+                        x: -2362
+                        "y": -2530
+                    writeSubstreamAnalytics:
+                        x: -1110
+                        "y": -2530
+        defaultCallSemantics: FunctionCall
+        environment: ""
+        golangVersion: 1.25.4
+        grpcHost: 0.0.0.0
+        grpcPort: 9203
+        httpHost: 0.0.0.0
+        httpPort: 9093
+        kubernetesWorkloadType: Deployment
+        livenessHandler: health/live
+        metricsHandler: metrics
+        modulePath: github.com/gorundebug/cppcoroexample-analyticsservice
+        name: Analytics Service
+        pipelines:
+            analytics:
+                analyticsSchedule:
+                    endpoint: analyticsSchedule
+                    name: Analytics Schedule
+                    type: Input
+                    valueType: automationJob
+                consumeOrderProcessed:
+                    endpoint: orderProcessed
+                    name: Consume Order Processed
+                    source: countOrderProcessed
+                    type: Input
+                    valueType: orderProcessed
+                countOrderProcessed:
+                    functionDescription: |
+                        Count successful and unsuccessful orders independently, then return the event unchanged.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: CountOrderProcessed
+                    functionPackage: analytics
+                    name: Count Order Processed
+                    source: consumeOrderProcessed
+                    type: Process
+                    valueType: orderProcessed
+            analyticsSources:
+                analyticsOrders:
+                    endpoint: analyticsOrders
+                    name: Analytics Orders
+                    type: Input
+                    valueType: analyticsEvent
+                analyticsPayments:
+                    endpoint: analyticsPayments
+                    name: Analytics Payments
+                    type: Input
+                    valueType: analyticsEvent
+                analyticsShipments:
+                    endpoint: analyticsShipments
+                    name: Analytics Shipments
+                    type: Input
+                    valueType: analyticsEvent
+                splitAnalyticsOrders:
+                    name: Split Analytics Orders
+                    source: analyticsOrders
+                    type: Split
+                splitAnalyticsPayments:
+                    name: Split Analytics Payments
+                    source: analyticsPayments
+                    type: Split
+            cycleAnalytics:
+                advanceCycleAnalytics:
+                    functionDescription: Increment the cycle counter while preserving the analytics event identity.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: AdvanceCycleAnalytics
+                    functionPackage: cycleanalytics
+                    name: Advance Cycle Analytics
+                    source: mergeCycleAnalytics
+                    type: Map
+                    valueType: analyticsEvent
+                completeCycleAnalytics:
+                    functionDescription: Keep the terminal analytics event once its cycle counter reaches three.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: CompleteCycleAnalytics
+                    functionPackage: cycleanalytics
+                    name: Complete Cycle Analytics
+                    source: splitCycleAnalytics
+                    type: Filter
+                continueCycleAnalytics:
+                    functionDescription: Keep intermediate analytics events whose cycle counter is below three.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ContinueCycleAnalytics
+                    functionPackage: cycleanalytics
+                    name: Continue Cycle Analytics
+                    source: splitCycleAnalytics
+                    type: Filter
+                cycleAnalyticsInput:
+                    endpoint: cycleAnalyticsInput
+                    name: Cycle Analytics Input
+                    type: Input
+                    valueType: analyticsEvent
+                cycleAnalyticsLink:
+                    name: Cycle Analytics Link
+                    source: continueCycleAnalytics
+                    type: CycleLink
+                mergeCycleAnalytics:
+                    name: Merge Cycle Analytics
+                    sources:
+                        - cycleAnalyticsInput
+                        - cycleAnalyticsLink
+                    type: Merge
+                splitCycleAnalytics:
+                    name: Split Cycle Analytics
+                    source: advanceCycleAnalytics
+                    type: Split
+                writeCycleAnalytics:
+                    endpoint: cycleAnalyticsResult
+                    name: Write Cycle Analytics
+                    source: completeCycleAnalytics
+                    type: Sink
+                    valueType: analyticsEvent
+            joinAnalytics:
+                joinOrderPaymentAnalytics:
+                    functionDescription: Join matching order and payment analytics events and emit their combined total.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: JoinOrderPaymentAnalytics
+                    functionPackage: joinanalytics
+                    joinStorage: HashMap
+                    joinType: Inner
+                    name: Join Order Payment Analytics
+                    renewTTL: true
+                    source: keyOrdersForJoin
+                    sources:
+                        - keyPaymentsForJoin
+                    ttl: 60000
+                    type: Join
+                    valueType: analyticsResult
+                keyOrdersForJoin:
+                    functionDescription: Key the order analytics event by correlation key.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyOrdersForJoin
+                    functionPackage: joinanalytics
+                    keyType: analyticsKey
+                    name: Key Orders For Join
+                    source: splitAnalyticsOrders
+                    type: KeyBy
+                    valueType: analyticsEvent
+                keyPaymentsForJoin:
+                    functionDescription: Key the payment analytics event by correlation key.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyPaymentsForJoin
+                    functionPackage: joinanalytics
+                    keyType: analyticsKey
+                    name: Key Payments For Join
+                    source: splitAnalyticsPayments
+                    type: KeyBy
+                    valueType: analyticsEvent
+                writeJoinedAnalytics:
+                    endpoint: joinedAnalytics
+                    name: Write Joined Analytics
+                    source: joinOrderPaymentAnalytics
+                    type: Sink
+                    valueType: analyticsResult
+            multiJoinAnalytics:
+                highValueAnalytics:
+                    name: High Value Analytics
+                    source: routeAnalyticsResult
+                    type: When
+                    valueType: analyticsResult
+                keyOrdersForMultiJoin:
+                    functionDescription: Key the order analytics event for the multi-way join.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyOrdersForMultiJoin
+                    functionPackage: multijoinanalytics
+                    keyType: analyticsKey
+                    name: Key Orders For Multi Join
+                    source: splitAnalyticsOrders
+                    type: KeyBy
+                    valueType: analyticsEvent
+                keyPaymentsForMultiJoin:
+                    functionDescription: Key the payment analytics event for the multi-way join.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyPaymentsForMultiJoin
+                    functionPackage: multijoinanalytics
+                    keyType: analyticsKey
+                    name: Key Payments For Multi Join
+                    source: splitAnalyticsPayments
+                    type: KeyBy
+                    valueType: analyticsEvent
+                keyShipmentsForMultiJoin:
+                    functionDescription: Key the shipment analytics event for the multi-way join.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyShipmentsForMultiJoin
+                    functionPackage: multijoinanalytics
+                    keyType: analyticsKey
+                    name: Key Shipments For Multi Join
+                    source: analyticsShipments
+                    type: KeyBy
+                    valueType: analyticsEvent
+                multiJoinAnalyticsEvents:
+                    functionDescription: Combine matching order, payment, and shipment analytics events.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: MultiJoinAnalyticsEvents
+                    functionPackage: multijoinanalytics
+                    joinStorage: HashMap
+                    name: Multi Join Analytics Events
+                    renewTTL: true
+                    source: keyOrdersForMultiJoin
+                    sources:
+                        - keyPaymentsForMultiJoin
+                        - keyShipmentsForMultiJoin
+                    ttl: 60000
+                    type: MultiJoin
+                    valueType: analyticsResult
+                routeAnalyticsResult:
+                    functionDescription: Route high-value analytics results to the first branch and all others to the second branch.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: RouteAnalyticsResult
+                    functionPackage: multijoinanalytics
+                    name: Route Analytics Result
+                    source: multiJoinAnalyticsEvents
+                    type: Case
+                standardAnalytics:
+                    name: Standard Analytics
+                    source: routeAnalyticsResult
+                    type: When
+                    valueType: analyticsResult
+                writeHighValueAnalytics:
+                    endpoint: highValueAnalytics
+                    name: Write High Value Analytics
+                    source: highValueAnalytics
+                    type: Sink
+                    valueType: analyticsResult
+                writeStandardAnalytics:
+                    endpoint: standardAnalytics
+                    name: Write Standard Analytics
+                    source: standardAnalytics
+                    type: Sink
+                    valueType: analyticsResult
+            substreamAnalytics:
+                analyzeAnalyticsSubstream:
+                    name: Analyze Analytics Substream
+                    source: buildSubstreamAnalyticsResult
+                    type: SubStream
+                    valueType: analyticsEvent
+                buildSubstreamAnalyticsResult:
+                    functionDescription: Transform one callable SubStream input into its analytics result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: BuildSubstreamAnalyticsResult
+                    functionPackage: substreamanalytics
+                    name: Build Substream Analytics Result
+                    source: analyzeAnalyticsSubstream
+                    type: Map
+                    valueType: analyticsResult
+                invokeAnalyticsSubstream:
+                    functionDescription: Invoke the service-local analytics SubStream and emit its returned result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: InvokeAnalyticsSubstream
+                    functionPackage: substreamanalytics
+                    name: Invoke Analytics Substream
+                    source: substreamAnalyticsInput
+                    type: Map
+                    valueType: analyticsResult
+                substreamAnalyticsInput:
+                    endpoint: substreamAnalyticsInput
+                    name: Substream Analytics Input
+                    type: Input
+                    valueType: analyticsEvent
+                writeSubstreamAnalytics:
+                    endpoint: substreamAnalyticsResult
+                    name: Write Substream Analytics
+                    source: invokeAnalyticsSubstream
+                    type: Sink
+                    valueType: analyticsResult
+        programmingLanguage: CppBoost
+        readinessHandler: health/ready
+        shutdownTimeout: 30000
+        startupHandler: health/startup
+        statusHandler: status
+settings:
+    moduleVersion: v0.2.145
+    name: Example
+    repoPath: github.com/gorundebug/cppcoroexample
+types:
+    analyticsEvent:
+        definitionFormat: Native
+        description: 'Input for the canonical analytics joins. Fields: Key AnalyticsKey, Value int, Kind string.'
+        name: AnalyticsEvent
+        publicType: false
+        transferByValue: false
+        type: struct
+    analyticsKey:
+        description: Correlation key used by the canonical analytics joins.
+        name: AnalyticsKey
+        publicType: false
+        type: string
+        useAlias: false
+    analyticsResult:
+        definitionFormat: Native
+        description: 'Output of the canonical analytics joins. Fields: Key AnalyticsKey, Total int, Kind string.'
+        name: AnalyticsResult
+        publicType: false
+        transferByValue: false
+        type: struct
+    automationJob:
+        description: Automation job payload and result.
+        module: model
+        name: AutomationJob
+        publicType: true
+        type: string
+        useAlias: false
+    orderProcessed:
+        definitionFormat: Native
+        description: 'Final order-processing event. Fields: OrderID string, Status string, ProcessedAt time.Time, TotalItems int, ConfirmedItems int, FailureReason string.'
+        module: model
+        name: OrderProcessed
+        publicType: false
+        transferByValue: false
+        type: struct

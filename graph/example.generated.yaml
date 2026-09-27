@@ -1,0 +1,1686 @@
+dataConnectors:
+    analyticsFunctions:
+        endpoints:
+            analyticsOrders:
+                functionDescription: Produce a deterministic order analytics event for the canonical join examples.
+                functionInitializerGroup: ""
+                functionName: AnalyticsOrders
+                functionPackage: endpoint
+                name: Analytics Orders
+                publicFunction: false
+            analyticsPayments:
+                functionDescription: Produce a deterministic payment analytics event for the canonical join examples.
+                functionInitializerGroup: ""
+                functionName: AnalyticsPayments
+                functionPackage: endpoint
+                name: Analytics Payments
+                publicFunction: false
+            analyticsShipments:
+                functionDescription: Produce a deterministic shipment analytics event for the canonical multi-way join example.
+                functionInitializerGroup: ""
+                functionName: AnalyticsShipments
+                functionPackage: endpoint
+                name: Analytics Shipments
+                publicFunction: false
+            cycleAnalyticsInput:
+                functionDescription: Produce one deterministic analytics event that exercises the finite feedback cycle.
+                functionInitializerGroup: ""
+                functionName: CycleAnalyticsInput
+                functionPackage: endpoint
+                name: Cycle Analytics Input
+                publicFunction: false
+            cycleAnalyticsResult:
+                functionDescription: Validate the terminal event emitted after three passes through the feedback cycle.
+                functionInitializerGroup: ""
+                functionName: CycleAnalyticsResult
+                functionPackage: endpoint
+                name: Cycle Analytics Result
+                publicFunction: false
+            highValueAnalytics:
+                functionDescription: Validate and record analytics results routed to the high-value Case branch.
+                functionInitializerGroup: ""
+                functionName: HighValueAnalytics
+                functionPackage: endpoint
+                name: High Value Analytics
+                publicFunction: false
+            joinedAnalytics:
+                functionDescription: Validate and record the result of the two-way analytics join.
+                functionInitializerGroup: ""
+                functionName: JoinedAnalytics
+                functionPackage: endpoint
+                name: Joined Analytics
+                publicFunction: false
+            standardAnalytics:
+                functionDescription: Validate and record analytics results routed to the standard Case branch.
+                functionInitializerGroup: ""
+                functionName: StandardAnalytics
+                functionPackage: endpoint
+                name: Standard Analytics
+                publicFunction: false
+            substreamAnalyticsInput:
+                functionDescription: Produce one deterministic analytics event that invokes the service-local SubStream example.
+                functionInitializerGroup: ""
+                functionName: SubstreamAnalyticsInput
+                functionPackage: endpoint
+                name: Substream Analytics Input
+                publicFunction: false
+            substreamAnalyticsResult:
+                functionDescription: Validate and record the result returned by the service-local SubStream example.
+                functionInitializerGroup: ""
+                functionName: SubstreamAnalyticsResult
+                functionPackage: endpoint
+                name: Substream Analytics Result
+                publicFunction: false
+        implementation: function
+        name: Analytics Functions
+        type: Custom
+    inventoryServiceApi:
+        address: dns:///localhost:9202
+        connectionsCount: 1
+        endpoints:
+            processOrderItem:
+                functionDescription: |
+                    Reserve inventory for one order item using its order ID, item ID, SKU, and quantity.
+                    Return the available quantity, reservation outcome, and status. The caller combines this response with the original identity, requested quantity, and unit price.
+                    If the inventory call fails, the caller returns a non-reserved PROCESSING_ERROR result with the failure message.
+                functionInitializerGroup: ""
+                functionName: ProcessOrderItem
+                functionPackage: endpoint
+                grpcMethodType: NoStreaming
+                methodName: ProcessOrderItem
+                name: Process Order Item
+                publicFunction: false
+        goImplementation: google/grpc
+        module: inventory_service_api
+        name: Inventory Service API
+        pythonImplementation: google/grpc
+        rustImplementation: rust/tonic
+        type: gRPC
+        typeScriptImplementation: grpc/grpc-js
+    localCron:
+        endpoints:
+            analyticsSchedule:
+                enabled: true
+                functionDescription: |
+                    Create an analytics job message identifying the local scheduled firing.
+                functionInitializerGroup: ""
+                functionName: AnalyticsSchedule
+                functionPackage: cron
+                missedRunPolicy: FireOnce
+                name: Analytics Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/5 * * * *'
+                timezone: UTC
+                tracingEnabled: false
+            localSchedule:
+                enabled: true
+                functionDescription: |
+                    Create a job message identifying the local scheduled firing.
+                functionInitializerGroup: ""
+                functionName: LocalSchedule
+                functionPackage: cron
+                missedRunPolicy: FireOnce
+                name: Local Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/5 * * * *'
+                timezone: UTC
+                tracingEnabled: false
+        goImplementation: go/gocron
+        name: Local Cron
+        pythonImplementation: python/apscheduler
+        rustImplementation: rust/croner
+        type: Cron
+        typeScriptImplementation: node/croner
+    orderEvents:
+        brokers: redpanda:9092
+        dialTimeout: 5000
+        endpoints:
+            orderProcessed:
+                consumerGroup: analytics-service
+                createTopic: true
+                enabled: true
+                functionDescription: |
+                    Exchange OrderProcessed events keyed by order ID.
+                    Producers include the final status, processing time, total and confirmed item counts, and a failure reason for unsuccessful orders.
+                    Consumers decode the event and mark its Kafka message processed only after the pipeline handles it successfully.
+                functionInitializerGroup: ""
+                functionName: OrderProcessedEndpoint
+                functionPackage: endpoint
+                name: Order Processed
+                partitions: 1
+                publicFunction: false
+                replicationFactor: 1
+                topic: order-processed
+        goImplementation: IBM/Sarama
+        name: Order Events
+        password: ""
+        pythonImplementation: aiokafka
+        rustImplementation: rust/rdkafka
+        saslMechanism: SCRAM-SHA-512
+        securityProtocol: PLAINTEXT
+        type: Kafka
+        typeScriptImplementation: confluent/kafka-javascript
+        username: ""
+        version: 2.8.0
+    orderServiceApi:
+        endpoints:
+            processOrder:
+                functionDescription: |
+                    Accept orders with at least one item and positive quantities; reject malformed or invalid requests as client errors.
+                    Reuse X-Request-ID when supplied, otherwise generate an order ID. Preserve customer, item, price, and X-Trace data, and apply the configured timeout of five seconds by default.
+                    Return one response per order. When all items finish, use CONFIRMED only if every item was reserved; otherwise use PARTIALLY_CONFIRMED. If the deadline wins, return TIMED_OUT with the item results received so far.
+                    Calculate the total from processed item prices, falling back to the submitted total when no item result arrived, and include individual item failures in the response.
+                functionInitializerGroup: ""
+                functionName: ProcessOrder
+                functionPackage: endpoint
+                httpMethodType: POST
+                name: Process Order
+                path: /v1/processorder
+                publicFunction: false
+        goImplementation: net/http
+        module: order_service_api
+        name: Order Service API
+        pythonImplementation: aiohttp
+        rustImplementation: rust/axum
+        type: HTTP
+        typeScriptImplementation: node/http
+        useDedicatedListener: false
+    temporal:
+        address: temporal:7233
+        apiKey: ""
+        endpoints:
+            activityJob:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: ActivityJobEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Activity Job
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutActivityA:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutActivityAEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Activity A
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutActivityB:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutActivityBEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Activity B
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutActivityC:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutActivityCEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 1
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Activity C
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-heavy-activities
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            fanOutWorkflowJob:
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: FanoutWorkflowJobEndpoint
+                functionPackage: workflow
+                maxConcurrentWorkflowTasks: 4
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Fan-Out Workflow Job
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-workflow-jobs
+                temporalExecutionType: Workflow
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            sequentialActivityA:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: SequentialActivityAEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Sequential Activity A
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            sequentialActivityB:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: SequentialActivityBEndpoint
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Sequential Activity B
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-activity-jobs
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            temporalActivitySchedule:
+                activityHeartbeatTimeout: 5000
+                activityStartToCloseTimeout: 30000
+                enabled: true
+                functionDescription: |
+                    Create an Activity job message identifying the durable scheduled firing.
+                functionInitializerGroup: ""
+                functionName: TemporalActivitySchedule
+                functionPackage: activity
+                maxConcurrentActivities: 2
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Temporal Activity Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/10 * * * *'
+                scheduleId: example-automation-activity-schedule
+                taskQueue: automation-activity-schedules
+                temporalExecutionType: Activity
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            temporalWorkflowSchedule:
+                enabled: true
+                functionDescription: |
+                    Create a Workflow job message identifying the durable scheduled firing.
+                functionInitializerGroup: ""
+                functionName: TemporalWorkflowSchedule
+                functionPackage: workflow
+                maxConcurrentWorkflowTasks: 4
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Temporal Workflow Schedule
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: '*/10 * * * *'
+                scheduleId: example-automation-workflow-schedule
+                taskQueue: automation-workflow-schedules
+                temporalExecutionType: Workflow
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+            workflowJob:
+                enabled: true
+                functionDescription: ""
+                functionInitializerGroup: ""
+                functionName: WorkflowJobEndpoint
+                functionPackage: workflow
+                maxConcurrentWorkflowTasks: 4
+                maximumAttempts: 3
+                missedRunPolicy: FireOnce
+                name: Workflow Job
+                overlapPolicy: Skip
+                publicFunction: false
+                schedule: ""
+                scheduleId: ""
+                taskQueue: automation-workflow-jobs
+                temporalExecutionType: Workflow
+                timezone: UTC
+                tracingEnabled: false
+                workflowExecutionTimeout: 60000
+        goImplementation: temporal/go
+        identity: example-automation
+        name: Temporal
+        namespace: default
+        pythonImplementation: temporal/python
+        tlsEnabled: false
+        type: Temporal
+        typeScriptImplementation: temporal/typescript
+        workerStopTimeout: 5000
+modules:
+    inventoryServiceApi:
+        golangVersion: 1.25.4
+        modulePath: github.com/gorundebug/cppcoroexample-inventory-service-api
+        name: inventory_service_api
+    model:
+        golangVersion: 1.25.4
+        modulePath: github.com/gorundebug/cppcoroexample-model
+        name: model
+    orderServiceApi:
+        golangVersion: 1.25.4
+        modulePath: github.com/gorundebug/cppcoroexample-order-service-api
+        name: order_service_api
+pools:
+    defaultPool:
+        executorsCount: 2
+        name: Default Pool
+    inventoryPriorityWorkers:
+        executorsCount: 2
+        name: Inventory Priority Workers
+services:
+    analyticsService:
+        appearance:
+            color: '#05ABF7'
+            pipelines:
+                analytics:
+                    analyticsSchedule:
+                        x: -1905
+                        "y": -497
+                    consumeOrderProcessed:
+                        x: -1453
+                        "y": -510
+                    countOrderProcessed:
+                        x: -1695
+                        "y": -518
+                analyticsSources:
+                    analyticsOrders:
+                        x: -1739
+                        "y": -1133
+                    analyticsPayments:
+                        x: -2307
+                        "y": -767
+                    analyticsShipments:
+                        x: 12
+                        "y": -1308
+                    splitAnalyticsOrders:
+                        x: -1529
+                        "y": -1100
+                    splitAnalyticsPayments:
+                        x: -1945
+                        "y": -776
+                cycleAnalytics:
+                    advanceCycleAnalytics:
+                        x: -1502
+                        "y": -1648
+                    completeCycleAnalytics:
+                        x: -529
+                        "y": -1718
+                    continueCycleAnalytics:
+                        x: -879
+                        "y": -2196
+                    cycleAnalyticsInput:
+                        x: -2362
+                        "y": -1830
+                    cycleAnalyticsLink:
+                        x: -1311
+                        "y": -2114
+                    mergeCycleAnalytics:
+                        x: -1830
+                        "y": -1827
+                    splitCycleAnalytics:
+                        x: -830
+                        "y": -1687
+                    writeCycleAnalytics:
+                        x: -545
+                        "y": -2204
+                joinAnalytics:
+                    joinOrderPaymentAnalytics:
+                        x: -637
+                        "y": -1050
+                    keyOrdersForJoin:
+                        x: -1258
+                        "y": -1007
+                    keyPaymentsForJoin:
+                        x: -1377
+                        "y": -723
+                    writeJoinedAnalytics:
+                        x: -231
+                        "y": -1079
+                multiJoinAnalytics:
+                    highValueAnalytics:
+                        x: 398
+                        "y": -1650
+                    keyOrdersForMultiJoin:
+                        x: -1325
+                        "y": -1256
+                    keyPaymentsForMultiJoin:
+                        x: -1984
+                        "y": -1293
+                    keyShipmentsForMultiJoin:
+                        x: -365
+                        "y": -1315
+                    multiJoinAnalyticsEvents:
+                        x: -812
+                        "y": -1446
+                    routeAnalyticsResult:
+                        x: -89
+                        "y": -1589
+                    standardAnalytics:
+                        x: 463
+                        "y": -1449
+                    writeHighValueAnalytics:
+                        x: 820
+                        "y": -1669
+                    writeStandardAnalytics:
+                        x: 966
+                        "y": -1453
+                substreamAnalytics:
+                    analyzeAnalyticsSubstream:
+                        x: -1740
+                        "y": -2860
+                    buildSubstreamAnalyticsResult:
+                        x: -1110
+                        "y": -2860
+                    invokeAnalyticsSubstream:
+                        x: -1740
+                        "y": -2530
+                    substreamAnalyticsInput:
+                        x: -2362
+                        "y": -2530
+                    writeSubstreamAnalytics:
+                        x: -1110
+                        "y": -2530
+        defaultCallSemantics: FunctionCall
+        environment: ""
+        golangVersion: 1.25.4
+        grpcHost: 0.0.0.0
+        grpcPort: 9203
+        httpHost: 0.0.0.0
+        httpPort: 9093
+        kubernetesWorkloadType: Deployment
+        livenessHandler: health/live
+        metricsHandler: metrics
+        modulePath: github.com/gorundebug/cppcoroexample-analyticsservice
+        name: Analytics Service
+        pipelines:
+            analytics:
+                analyticsSchedule:
+                    endpoint: analyticsSchedule
+                    name: Analytics Schedule
+                    type: Input
+                    valueType: automationJob
+                consumeOrderProcessed:
+                    endpoint: orderProcessed
+                    name: Consume Order Processed
+                    source: countOrderProcessed
+                    type: Input
+                    valueType: orderProcessed
+                countOrderProcessed:
+                    functionDescription: |
+                        Count successful and unsuccessful orders independently, then return the event unchanged.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: CountOrderProcessed
+                    functionPackage: analytics
+                    name: Count Order Processed
+                    source: consumeOrderProcessed
+                    type: Process
+                    valueType: orderProcessed
+            analyticsSources:
+                analyticsOrders:
+                    endpoint: analyticsOrders
+                    name: Analytics Orders
+                    type: Input
+                    valueType: analyticsEvent
+                analyticsPayments:
+                    endpoint: analyticsPayments
+                    name: Analytics Payments
+                    type: Input
+                    valueType: analyticsEvent
+                analyticsShipments:
+                    endpoint: analyticsShipments
+                    name: Analytics Shipments
+                    type: Input
+                    valueType: analyticsEvent
+                splitAnalyticsOrders:
+                    name: Split Analytics Orders
+                    source: analyticsOrders
+                    type: Split
+                splitAnalyticsPayments:
+                    name: Split Analytics Payments
+                    source: analyticsPayments
+                    type: Split
+            cycleAnalytics:
+                advanceCycleAnalytics:
+                    functionDescription: Increment the cycle counter while preserving the analytics event identity.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: AdvanceCycleAnalytics
+                    functionPackage: cycleanalytics
+                    name: Advance Cycle Analytics
+                    source: mergeCycleAnalytics
+                    type: Map
+                    valueType: analyticsEvent
+                completeCycleAnalytics:
+                    functionDescription: Keep the terminal analytics event once its cycle counter reaches three.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: CompleteCycleAnalytics
+                    functionPackage: cycleanalytics
+                    name: Complete Cycle Analytics
+                    source: splitCycleAnalytics
+                    type: Filter
+                continueCycleAnalytics:
+                    functionDescription: Keep intermediate analytics events whose cycle counter is below three.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ContinueCycleAnalytics
+                    functionPackage: cycleanalytics
+                    name: Continue Cycle Analytics
+                    source: splitCycleAnalytics
+                    type: Filter
+                cycleAnalyticsInput:
+                    endpoint: cycleAnalyticsInput
+                    name: Cycle Analytics Input
+                    type: Input
+                    valueType: analyticsEvent
+                cycleAnalyticsLink:
+                    name: Cycle Analytics Link
+                    source: continueCycleAnalytics
+                    type: CycleLink
+                mergeCycleAnalytics:
+                    name: Merge Cycle Analytics
+                    sources:
+                        - cycleAnalyticsInput
+                        - cycleAnalyticsLink
+                    type: Merge
+                splitCycleAnalytics:
+                    name: Split Cycle Analytics
+                    source: advanceCycleAnalytics
+                    type: Split
+                writeCycleAnalytics:
+                    endpoint: cycleAnalyticsResult
+                    name: Write Cycle Analytics
+                    source: completeCycleAnalytics
+                    type: Sink
+                    valueType: analyticsEvent
+            joinAnalytics:
+                joinOrderPaymentAnalytics:
+                    functionDescription: Join matching order and payment analytics events and emit their combined total.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: JoinOrderPaymentAnalytics
+                    functionPackage: joinanalytics
+                    joinStorage: HashMap
+                    joinType: Inner
+                    name: Join Order Payment Analytics
+                    renewTTL: true
+                    source: keyOrdersForJoin
+                    sources:
+                        - keyPaymentsForJoin
+                    ttl: 60000
+                    type: Join
+                    valueType: analyticsResult
+                keyOrdersForJoin:
+                    functionDescription: Key the order analytics event by correlation key.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyOrdersForJoin
+                    functionPackage: joinanalytics
+                    keyType: analyticsKey
+                    name: Key Orders For Join
+                    source: splitAnalyticsOrders
+                    type: KeyBy
+                    valueType: analyticsEvent
+                keyPaymentsForJoin:
+                    functionDescription: Key the payment analytics event by correlation key.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyPaymentsForJoin
+                    functionPackage: joinanalytics
+                    keyType: analyticsKey
+                    name: Key Payments For Join
+                    source: splitAnalyticsPayments
+                    type: KeyBy
+                    valueType: analyticsEvent
+                writeJoinedAnalytics:
+                    endpoint: joinedAnalytics
+                    name: Write Joined Analytics
+                    source: joinOrderPaymentAnalytics
+                    type: Sink
+                    valueType: analyticsResult
+            multiJoinAnalytics:
+                highValueAnalytics:
+                    name: High Value Analytics
+                    source: routeAnalyticsResult
+                    type: When
+                    valueType: analyticsResult
+                keyOrdersForMultiJoin:
+                    functionDescription: Key the order analytics event for the multi-way join.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyOrdersForMultiJoin
+                    functionPackage: multijoinanalytics
+                    keyType: analyticsKey
+                    name: Key Orders For Multi Join
+                    source: splitAnalyticsOrders
+                    type: KeyBy
+                    valueType: analyticsEvent
+                keyPaymentsForMultiJoin:
+                    functionDescription: Key the payment analytics event for the multi-way join.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyPaymentsForMultiJoin
+                    functionPackage: multijoinanalytics
+                    keyType: analyticsKey
+                    name: Key Payments For Multi Join
+                    source: splitAnalyticsPayments
+                    type: KeyBy
+                    valueType: analyticsEvent
+                keyShipmentsForMultiJoin:
+                    functionDescription: Key the shipment analytics event for the multi-way join.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: KeyShipmentsForMultiJoin
+                    functionPackage: multijoinanalytics
+                    keyType: analyticsKey
+                    name: Key Shipments For Multi Join
+                    source: analyticsShipments
+                    type: KeyBy
+                    valueType: analyticsEvent
+                multiJoinAnalyticsEvents:
+                    functionDescription: Combine matching order, payment, and shipment analytics events.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: MultiJoinAnalyticsEvents
+                    functionPackage: multijoinanalytics
+                    joinStorage: HashMap
+                    name: Multi Join Analytics Events
+                    renewTTL: true
+                    source: keyOrdersForMultiJoin
+                    sources:
+                        - keyPaymentsForMultiJoin
+                        - keyShipmentsForMultiJoin
+                    ttl: 60000
+                    type: MultiJoin
+                    valueType: analyticsResult
+                routeAnalyticsResult:
+                    functionDescription: Route high-value analytics results to the first branch and all others to the second branch.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: RouteAnalyticsResult
+                    functionPackage: multijoinanalytics
+                    name: Route Analytics Result
+                    source: multiJoinAnalyticsEvents
+                    type: Case
+                standardAnalytics:
+                    name: Standard Analytics
+                    source: routeAnalyticsResult
+                    type: When
+                    valueType: analyticsResult
+                writeHighValueAnalytics:
+                    endpoint: highValueAnalytics
+                    name: Write High Value Analytics
+                    source: highValueAnalytics
+                    type: Sink
+                    valueType: analyticsResult
+                writeStandardAnalytics:
+                    endpoint: standardAnalytics
+                    name: Write Standard Analytics
+                    source: standardAnalytics
+                    type: Sink
+                    valueType: analyticsResult
+            substreamAnalytics:
+                analyzeAnalyticsSubstream:
+                    name: Analyze Analytics Substream
+                    source: buildSubstreamAnalyticsResult
+                    type: SubStream
+                    valueType: analyticsEvent
+                buildSubstreamAnalyticsResult:
+                    functionDescription: Transform one callable SubStream input into its analytics result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: BuildSubstreamAnalyticsResult
+                    functionPackage: substreamanalytics
+                    name: Build Substream Analytics Result
+                    source: analyzeAnalyticsSubstream
+                    type: Map
+                    valueType: analyticsResult
+                invokeAnalyticsSubstream:
+                    functionDescription: Invoke the service-local analytics SubStream and emit its returned result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: InvokeAnalyticsSubstream
+                    functionPackage: substreamanalytics
+                    name: Invoke Analytics Substream
+                    source: substreamAnalyticsInput
+                    type: Map
+                    valueType: analyticsResult
+                substreamAnalyticsInput:
+                    endpoint: substreamAnalyticsInput
+                    name: Substream Analytics Input
+                    type: Input
+                    valueType: analyticsEvent
+                writeSubstreamAnalytics:
+                    endpoint: substreamAnalyticsResult
+                    name: Write Substream Analytics
+                    source: invokeAnalyticsSubstream
+                    type: Sink
+                    valueType: analyticsResult
+        programmingLanguage: CppBoost
+        readinessHandler: health/ready
+        shutdownTimeout: 30000
+        startupHandler: health/startup
+        statusHandler: status
+    automationService:
+        appearance:
+            color: '#00A86B'
+            pipelines:
+                automation:
+                    activityPause:
+                        x: -251
+                        "y": 219
+                    callFanOutActivityA:
+                        x: -271
+                        "y": 1284
+                    callFanOutActivityB:
+                        x: 7
+                        "y": 990
+                    callFanOutActivityC:
+                        x: 317
+                        "y": 1313
+                    callSequentialActivityA:
+                        x: 49
+                        "y": 473
+                    callSequentialActivityB:
+                        x: 270
+                        "y": 650
+                    consumeActivityJob:
+                        x: -500
+                        "y": 350
+                    consumeFanOutActivityA:
+                        x: -277
+                        "y": 1051
+                    consumeFanOutActivityB:
+                        x: 295
+                        "y": 996
+                    consumeFanOutActivityC:
+                        x: 553
+                        "y": 1503
+                    consumeFanOutWorkflowJob:
+                        x: -635
+                        "y": 1287
+                    consumeSequentialActivityA:
+                        x: 302
+                        "y": 489
+                    consumeSequentialActivityB:
+                        x: 503
+                        "y": 658
+                    consumeWorkflowJob:
+                        x: -515
+                        "y": 635
+                    localSchedule:
+                        x: -1250
+                        "y": 500
+                    observeActivityResult:
+                        x: -500
+                        "y": 500
+                    observeFanOutActivityB:
+                        x: -11
+                        "y": 793
+                    observeFanOutActivityC:
+                        x: 587
+                        "y": 1121
+                    observeWorkflowResult:
+                        x: -650
+                        "y": 788
+                    processActivityJob:
+                        x: 10
+                        "y": 350
+                    processFanOutActivityA:
+                        x: -268
+                        "y": 819
+                    processFanOutActivityB:
+                        x: 705
+                        "y": 1001
+                    processFanOutActivityC:
+                        x: 931
+                        "y": 1493
+                    processScheduledActivity:
+                        x: -1442
+                        "y": 655
+                    processScheduledWorkflow:
+                        x: -1411
+                        "y": 856
+                    processSequentialActivityA:
+                        x: 568
+                        "y": 486
+                    processSequentialActivityB:
+                        x: 804
+                        "y": 660
+                    processWorkflowJob:
+                        x: -59
+                        "y": 654
+                    scheduledActivityPause:
+                        x: -1661
+                        "y": 402
+                    scheduledWorkflowPause:
+                        x: -1684
+                        "y": 1167
+                    splitActivityAResult:
+                        x: 40
+                        "y": 1312
+                    splitOnDemandJobs:
+                        x: -1010
+                        "y": 500
+                    submitActivityJob:
+                        x: -760
+                        "y": 350
+                    submitFanOutWorkflowJob:
+                        x: -967
+                        "y": 1034
+                    submitWorkflowJob:
+                        x: -807
+                        "y": 629
+                    temporalActivitySchedule:
+                        x: -1917
+                        "y": 639
+                    temporalWorkflowSchedule:
+                        x: -1906
+                        "y": 846
+                    workflowPause:
+                        x: -233
+                        "y": 504
+        defaultCallSemantics: FunctionCall
+        environment: ""
+        golangVersion: 1.25.4
+        grpcHost: 0.0.0.0
+        grpcPort: 9204
+        httpHost: 0.0.0.0
+        httpPort: 9094
+        kubernetesWorkloadType: Deployment
+        links:
+            link1:
+                callSemantics: FunctionCall
+                from: callSequentialActivityA
+                poolName: Default Pool
+                priority: 2
+                to: callSequentialActivityB
+            link2:
+                callSemantics: FunctionCall
+                from: callSequentialActivityB
+                poolName: Default Pool
+                to: processWorkflowJob
+            link3:
+                callSemantics: FunctionCall
+                from: consumeActivityJob
+                to: activityPause
+            link4:
+                callSemantics: FunctionCall
+                from: consumeFanOutActivityA
+                to: processFanOutActivityA
+            link5:
+                callSemantics: FunctionCall
+                from: consumeFanOutActivityB
+                to: processFanOutActivityB
+            link6:
+                callSemantics: FunctionCall
+                from: consumeFanOutActivityC
+                to: processFanOutActivityC
+            link7:
+                callSemantics: FunctionCall
+                from: consumeFanOutWorkflowJob
+                poolName: Default Pool
+                to: callFanOutActivityA
+            link8:
+                callSemantics: FunctionCall
+                from: consumeSequentialActivityA
+                to: processSequentialActivityA
+            link9:
+                callSemantics: FunctionCall
+                from: consumeSequentialActivityB
+                to: processSequentialActivityB
+            link10:
+                callSemantics: FunctionCall
+                from: consumeWorkflowJob
+                to: workflowPause
+            link11:
+                callSemantics: FunctionCall
+                from: splitActivityAResult
+                poolName: Default Pool
+                priority: 2
+                to: callFanOutActivityB
+            link12:
+                callSemantics: FunctionCall
+                from: splitActivityAResult
+                poolName: Default Pool
+                priority: 7
+                to: callFanOutActivityC
+            link13:
+                callSemantics: FunctionCall
+                from: workflowPause
+                poolName: Default Pool
+                to: callSequentialActivityA
+        livenessHandler: health/live
+        metricsHandler: metrics
+        modulePath: github.com/gorundebug/cppcoroexample-automationservice
+        name: Automation Service
+        pipelines:
+            automation:
+                activityPause:
+                    duration: 250
+                    functionDescription: |
+                        Apply the ordinary local Delay while processing an on-demand Temporal Activity.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ActivityPause
+                    functionPackage: automation
+                    name: Activity Pause
+                    source: consumeActivityJob
+                    type: Delay
+                callFanOutActivityA:
+                    endpoint: fanOutActivityA
+                    name: Call Fan-Out Activity A
+                    source: consumeFanOutWorkflowJob
+                    type: Sink
+                    valueType: automationJob
+                callFanOutActivityB:
+                    endpoint: fanOutActivityB
+                    name: Call Fan-Out Activity B
+                    source: splitActivityAResult
+                    type: Sink
+                    valueType: automationJob
+                callFanOutActivityC:
+                    endpoint: fanOutActivityC
+                    name: Call Fan-Out Activity C
+                    source: splitActivityAResult
+                    type: Sink
+                    valueType: automationJob
+                callSequentialActivityA:
+                    endpoint: sequentialActivityA
+                    name: Call Sequential Activity A
+                    source: workflowPause
+                    type: Sink
+                    valueType: automationJob
+                callSequentialActivityB:
+                    endpoint: sequentialActivityB
+                    name: Call Sequential Activity B
+                    source: callSequentialActivityA
+                    type: Sink
+                    valueType: automationJob
+                consumeActivityJob:
+                    endpoint: activityJob
+                    name: Consume Activity Job
+                    source: processActivityJob
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutActivityA:
+                    endpoint: fanOutActivityA
+                    name: Consume Fan-Out Activity A
+                    source: processFanOutActivityA
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutActivityB:
+                    endpoint: fanOutActivityB
+                    name: Consume Fan-Out Activity B
+                    source: processFanOutActivityB
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutActivityC:
+                    endpoint: fanOutActivityC
+                    name: Consume Fan-Out Activity C
+                    source: processFanOutActivityC
+                    type: Input
+                    valueType: automationJob
+                consumeFanOutWorkflowJob:
+                    endpoint: fanOutWorkflowJob
+                    name: Consume Fan-Out Workflow Job
+                    type: Input
+                    valueType: automationJob
+                consumeSequentialActivityA:
+                    endpoint: sequentialActivityA
+                    name: Consume Sequential Activity A
+                    source: processSequentialActivityA
+                    type: Input
+                    valueType: automationJob
+                consumeSequentialActivityB:
+                    endpoint: sequentialActivityB
+                    name: Consume Sequential Activity B
+                    source: processSequentialActivityB
+                    type: Input
+                    valueType: automationJob
+                consumeWorkflowJob:
+                    endpoint: workflowJob
+                    name: Consume Workflow Job
+                    source: processWorkflowJob
+                    type: Input
+                    valueType: automationJob
+                localSchedule:
+                    endpoint: localSchedule
+                    name: Local Schedule
+                    type: Input
+                    valueType: automationJob
+                observeActivityResult:
+                    functionDescription: |
+                        Preserve the result returned through the on-demand Activity endpoint.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveActivityResult
+                    functionPackage: automation
+                    name: Observe Activity Result
+                    source: submitActivityJob
+                    type: Map
+                    valueType: automationJob
+                observeFanOutActivityB:
+                    functionDescription: |
+                        Observe the typed result returned by the Activity B fan-out branch.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveFanoutActivityB
+                    functionPackage: automation
+                    name: Observe Fan-Out Activity B
+                    source: callFanOutActivityB
+                    type: Map
+                    valueType: automationJob
+                observeFanOutActivityC:
+                    functionDescription: |
+                        Observe the typed result returned by the Activity C fan-out branch.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveFanoutActivityC
+                    functionPackage: automation
+                    name: Observe Fan-Out Activity C
+                    source: callFanOutActivityC
+                    type: Map
+                    valueType: automationJob
+                observeWorkflowResult:
+                    functionDescription: |
+                        Preserve the result returned through the on-demand Workflow endpoint.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ObserveWorkflowResult
+                    functionPackage: automation
+                    name: Observe Workflow Result
+                    source: submitWorkflowJob
+                    type: Map
+                    valueType: automationJob
+                processActivityJob:
+                    functionDescription: |
+                        Record Activity progress with DurableCallHeartbeat and return the processed job result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessActivityJob
+                    functionPackage: automation
+                    name: Process Activity Job
+                    source: activityPause
+                    type: Map
+                    valueType: automationJob
+                processFanOutActivityA:
+                    functionDescription: |
+                        Return Activity A's typed result before the Workflow Split.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessFanoutActivityA
+                    functionPackage: automation
+                    name: Process Fan-Out Activity A
+                    source: consumeFanOutActivityA
+                    type: Map
+                    valueType: automationJob
+                processFanOutActivityB:
+                    functionDescription: |
+                        Return Activity B's typed fan-out result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessFanoutActivityB
+                    functionPackage: automation
+                    name: Process Fan-Out Activity B
+                    source: consumeFanOutActivityB
+                    type: Map
+                    valueType: automationJob
+                processFanOutActivityC:
+                    functionDescription: |
+                        Return Activity C's typed fan-out result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessFanoutActivityC
+                    functionPackage: automation
+                    name: Process Fan-Out Activity C
+                    source: consumeFanOutActivityC
+                    type: Map
+                    valueType: automationJob
+                processScheduledActivity:
+                    functionDescription: |
+                        Return the visible result of one scheduled Activity execution.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessScheduledActivity
+                    functionPackage: automation
+                    name: Process Scheduled Activity
+                    source: scheduledActivityPause
+                    type: Map
+                    valueType: automationJob
+                processScheduledWorkflow:
+                    functionDescription: |
+                        Return the visible result of one scheduled Workflow execution.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessScheduledWorkflow
+                    functionPackage: automation
+                    name: Process Scheduled Workflow
+                    source: scheduledWorkflowPause
+                    type: Map
+                    valueType: automationJob
+                processSequentialActivityA:
+                    functionDescription: |
+                        Return sequential Activity A's typed result to its Temporal sink.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessSequentialActivityA
+                    functionPackage: automation
+                    name: Process Sequential Activity A
+                    source: consumeSequentialActivityA
+                    type: Map
+                    valueType: automationJob
+                processSequentialActivityB:
+                    functionDescription: |
+                        Return sequential Activity B's typed result to its Temporal sink.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessSequentialActivityB
+                    functionPackage: automation
+                    name: Process Sequential Activity B
+                    source: consumeSequentialActivityB
+                    type: Map
+                    valueType: automationJob
+                processWorkflowJob:
+                    functionDescription: |
+                        Continue the Workflow as new once, then return its final result.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessWorkflowJob
+                    functionPackage: automation
+                    name: Process Workflow Job
+                    source: callSequentialActivityB
+                    type: Map
+                    valueType: automationJob
+                scheduledActivityPause:
+                    duration: 250
+                    functionDescription: |
+                        Apply the ordinary local Delay inside an Activity started by Temporal Schedule.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ScheduledActivityPause
+                    functionPackage: automation
+                    name: Scheduled Activity Pause
+                    source: temporalActivitySchedule
+                    type: Delay
+                scheduledWorkflowPause:
+                    duration: 250
+                    functionDescription: |
+                        Use the official Temporal Workflow timer for a scheduled Workflow.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ScheduledWorkflowPause
+                    functionPackage: automation
+                    name: Scheduled Workflow Pause
+                    source: temporalWorkflowSchedule
+                    type: Delay
+                splitActivityAResult:
+                    name: Split Activity A Result
+                    source: callFanOutActivityA
+                    type: Split
+                splitOnDemandJobs:
+                    name: Split On-Demand Jobs
+                    source: localSchedule
+                    type: Split
+                submitActivityJob:
+                    endpoint: activityJob
+                    name: Submit Activity Job
+                    source: splitOnDemandJobs
+                    type: Sink
+                    valueType: automationJob
+                submitFanOutWorkflowJob:
+                    endpoint: fanOutWorkflowJob
+                    name: Submit Fan-Out Workflow Job
+                    source: splitOnDemandJobs
+                    type: Sink
+                    valueType: automationJob
+                submitWorkflowJob:
+                    endpoint: workflowJob
+                    name: Submit Workflow Job
+                    source: splitOnDemandJobs
+                    type: Sink
+                    valueType: automationJob
+                temporalActivitySchedule:
+                    endpoint: temporalActivitySchedule
+                    name: Temporal Activity Schedule
+                    source: processScheduledActivity
+                    type: Input
+                    valueType: automationJob
+                temporalWorkflowSchedule:
+                    endpoint: temporalWorkflowSchedule
+                    name: Temporal Workflow Schedule
+                    source: processScheduledWorkflow
+                    type: Input
+                    valueType: automationJob
+                workflowPause:
+                    duration: 250
+                    functionDescription: |
+                        Use the same Delay contract backed by the Temporal Workflow timer.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: WorkflowPause
+                    functionPackage: automation
+                    name: Workflow Pause
+                    source: consumeWorkflowJob
+                    type: Delay
+        programmingLanguage: GoLang
+        readinessHandler: health/ready
+        shutdownTimeout: 30000
+        startupHandler: health/startup
+        statusHandler: status
+    inventoryService:
+        appearance:
+            color: '#6800FF'
+            pipelines:
+                inventoryItem:
+                    getInventoryItemData:
+                        x: 527
+                        "y": -562
+                    getInventoryItemError:
+                        x: 733
+                        "y": -450
+                    mapInventoryItemError:
+                        x: 733
+                        "y": -263
+                    mergeInventoryResult:
+                        x: 542
+                        "y": 33
+                    processInventoryItem:
+                        x: 250
+                        "y": -400
+        defaultCallSemantics: FunctionCall
+        environment: ""
+        golangVersion: 1.25.4
+        grpcHost: 0.0.0.0
+        grpcPort: 9202
+        httpHost: 0.0.0.0
+        httpPort: 9092
+        kubernetesWorkloadType: Deployment
+        links:
+            link1:
+                callSemantics: FunctionCall
+                from: getInventoryItemData
+                to: mergeInventoryResult
+            link2:
+                callSemantics: FunctionCall
+                from: processInventoryItem
+                poolName: Inventory Priority Workers
+                priority: 10
+                to: getInventoryItemData
+        livenessHandler: health/live
+        metricsHandler: metrics
+        modulePath: github.com/gorundebug/cppcoroexample-inventoryservice
+        name: Inventory Service
+        pipelines:
+            inventoryItem:
+                getInventoryItemData:
+                    errorStream: getInventoryItemError
+                    functionDescription: |
+                        Reserve the requested quantity without allowing concurrent orders to overdraw stock.
+                        On success, return CONFIRMED with the requested quantity available. Otherwise return OUT_OF_STOCK with the current available quantity.
+                        Preserve the order and item identity, requested quantity, and unit price.
+                        The example starts with SKU-001: 100, SKU-002: 50, and SKU-003: 25.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: GetInventoryItemData
+                    functionPackage: inventoryItem
+                    name: Get Inventory Item Data
+                    source: processInventoryItem
+                    type: Process
+                    valueType: orderItemResult
+                getInventoryItemError:
+                    name: Get Inventory Item Error
+                    source: getInventoryItemData
+                    type: Error
+                    valueType: inventoryFailure
+                mapInventoryItemError:
+                    functionDescription: |
+                        When inventory processing fails, return an OUT_OF_STOCK result with no available quantity.
+                        Preserve the order and item identity and requested quantity, and record the failure.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: GetInventoryItemError
+                    functionPackage: inventoryItem
+                    name: Map Inventory Item Error
+                    source: getInventoryItemError
+                    type: Map
+                    valueType: orderItemResult
+                mergeInventoryResult:
+                    name: Merge Inventory Result
+                    sources:
+                        - getInventoryItemData
+                        - mapInventoryItemError
+                    type: Merge
+                processInventoryItem:
+                    endpoint: processOrderItem
+                    name: Process Inventory Item
+                    source: mergeInventoryResult
+                    type: Input
+                    valueType: orderItem
+        programmingLanguage: CppBoost
+        readinessHandler: health/ready
+        shutdownTimeout: 30000
+        startupHandler: health/startup
+        statusHandler: status
+    orderService:
+        appearance:
+            color: '#FF5C00'
+            pipelines:
+                default:
+                    processOrderItemError:
+                        x: -134
+                        "y": -129
+                order:
+                    mapOrderItemResultToOrderState:
+                        x: 103
+                        "y": -52
+                    mapToOrderProcessed:
+                        x: -821
+                        "y": -26
+                    mapToOrderState:
+                        x: -368
+                        "y": -227
+                    mergeResults:
+                        x: -228
+                        "y": 130
+                    processOrder:
+                        x: -760
+                        "y": -367
+                    processOrderItem:
+                        x: -60
+                        "y": -375
+                    processOrderItems:
+                        x: -198
+                        "y": -662
+                    publishOrderProcessed:
+                        x: -944
+                        "y": -255
+                    softDeadline:
+                        x: -477
+                        "y": -444
+                    splitOrderResult:
+                        x: -671
+                        "y": -129
+                    splitPipeline:
+                        x: -640
+                        "y": -597
+        defaultCallSemantics: FunctionCall
+        environment: ""
+        golangVersion: 1.25.4
+        grpcHost: 0.0.0.0
+        grpcPort: 9201
+        httpHost: 0.0.0.0
+        httpPort: 9091
+        kubernetesWorkloadType: Deployment
+        links:
+            link1:
+                callSemantics: FunctionCall
+                from: mergeResults
+                to: splitOrderResult
+            link2:
+                callSemantics: FunctionCall
+                from: processOrder
+                poolName: Default Pool
+                priority: 1
+                to: splitPipeline
+            link3:
+                callSemantics: FunctionCall
+                from: splitPipeline
+                to: processOrderItems
+            link4:
+                callSemantics: FunctionCall
+                from: splitPipeline
+                to: softDeadline
+        livenessHandler: health/live
+        metricsHandler: metrics
+        modulePath: github.com/gorundebug/cppcoroexample-orderservice
+        name: Order Service
+        pipelines:
+            default:
+                processOrderItemError:
+                    name: ProcessOrderItemError
+                    source: processOrderItem
+                    type: Error
+                    valueType: orderState
+            order:
+                mapOrderItemResultToOrderState:
+                    functionDescription: |
+                        Produce an order result containing one inventory result and preserving its order ID.
+                        Mark it CONFIRMED when the item was reserved; otherwise mark it PARTIALLY_CONFIRMED.
+                        Record the time when this result is produced.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: MapOrderItemResultToOrderState
+                    functionPackage: order
+                    name: Map Order Item Result To Order State
+                    source: processOrderItem
+                    type: Map
+                    valueType: orderState
+                mapToOrderProcessed:
+                    functionDescription: |
+                        Create an OrderProcessed event from the final order state.
+                        Preserve the order ID, status, and processing time. Count all item results and reserved items; for unsuccessful orders use the final status as the failure reason.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: MapToOrderProcessed
+                    functionPackage: order
+                    name: MapToOrderProcessed
+                    source: splitOrderResult
+                    type: Map
+                    valueType: orderProcessed
+                mapToOrderState:
+                    functionDescription: |
+                        Produce a TIMED_OUT order result that preserves the order ID and submitted total.
+                        Do not add item results at this stage; results received before the timeout are included in the final response.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: MapToOrderState
+                    functionPackage: order
+                    name: Map to Order State
+                    source: softDeadline
+                    type: Map
+                    valueType: orderState
+                mergeResults:
+                    name: Merge Results
+                    sources:
+                        - mapToOrderState
+                        - mapOrderItemResultToOrderState
+                        - processOrderItemError
+                    type: Merge
+                processOrder:
+                    endpoint: processOrder
+                    name: Process Order
+                    source: splitOrderResult
+                    type: Input
+                    valueType: order
+                processOrderItem:
+                    endpoint: processOrderItem
+                    errorStream: processOrderItemError
+                    name: Process Order Item
+                    source: processOrderItems
+                    type: Sink
+                    valueType: orderItemResult
+                processOrderItems:
+                    functionDescription: |
+                        Emit every order item independently for inventory processing.
+                        Preserve each item's data and assign the parent order ID.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: ProcessOrderItems
+                    functionPackage: order
+                    name: Process Order Items
+                    source: splitPipeline
+                    type: FlatMap
+                    valueType: orderItem
+                publishOrderProcessed:
+                    endpoint: orderProcessed
+                    name: Publish Order Processed
+                    source: mapToOrderProcessed
+                    type: Sink
+                    valueType: orderProcessed
+                softDeadline:
+                    duration: 1000
+                    functionDescription: |
+                        Trigger the timeout branch shortly before the request deadline, leaving the configured duration to assemble a response.
+                        When no request deadline exists, use the configured duration itself. Never wait past an existing deadline.
+                    functionInitializerGroup: ""
+                    functionModule: ""
+                    functionName: SoftDeadline
+                    functionPackage: order
+                    name: Soft Deadline
+                    source: splitPipeline
+                    type: Delay
+                splitOrderResult:
+                    name: Split Order Result
+                    source: mergeResults
+                    type: Split
+                splitPipeline:
+                    name: Split Pipeline
+                    source: processOrder
+                    type: Split
+        programmingLanguage: CppBoost
+        readinessHandler: health/ready
+        shutdownTimeout: 30000
+        startupHandler: health/startup
+        statusHandler: status
+settings:
+    moduleVersion: v0.2.145
+    name: Example
+    repoPath: github.com/gorundebug/cppcoroexample
+types:
+    analyticsEvent:
+        definitionFormat: Native
+        description: 'Input for the canonical analytics joins. Fields: Key AnalyticsKey, Value int, Kind string.'
+        name: AnalyticsEvent
+        publicType: false
+        transferByValue: false
+        type: struct
+    analyticsKey:
+        description: Correlation key used by the canonical analytics joins.
+        name: AnalyticsKey
+        publicType: false
+        type: string
+        useAlias: false
+    analyticsResult:
+        definitionFormat: Native
+        description: 'Output of the canonical analytics joins. Fields: Key AnalyticsKey, Total int, Kind string.'
+        name: AnalyticsResult
+        publicType: false
+        transferByValue: false
+        type: struct
+    automationJob:
+        description: Automation job payload and result.
+        module: model
+        name: AutomationJob
+        publicType: true
+        type: string
+        useAlias: false
+    inventoryFailure:
+        definitionFormat: Native
+        description: Inventory shortage data passed to GetInventoryItemError. Preserves the original order item and available quantity without throwing an exception.
+        name: InventoryFailure
+        publicType: false
+        type: struct
+    order:
+        definitionFormat: Native
+        description: 'E-commerce order submitted by a customer. Fields: ID string, CustomerID string, Items []OrderItem, CreatedAt time.Time.'
+        name: Order
+        publicType: false
+        transferByValue: false
+        type: struct
+    orderItem:
+        definitionFormat: Native
+        description: 'A single line item within an order. Fields: OrderID string, ItemID string, SKU string, Quantity int.'
+        module: model
+        name: OrderItem
+        publicType: false
+        transferByValue: false
+        type: struct
+    orderItemResult:
+        definitionFormat: Native
+        description: 'Inventory reservation result for a single order item. Fields: OrderID string, ItemID string, SKU string, RequestedQty int, AvailableQty int, Reserved bool, Status string (CONFIRMED / OUT_OF_STOCK / PROCESSING_ERROR), UnitPrice float64, Error string.'
+        module: model
+        name: OrderItemResult
+        publicType: false
+        transferByValue: false
+        type: struct
+    orderProcessed:
+        definitionFormat: Native
+        description: 'Final order-processing event. Fields: OrderID string, Status string, ProcessedAt time.Time, TotalItems int, ConfirmedItems int, FailureReason string.'
+        module: model
+        name: OrderProcessed
+        publicType: false
+        transferByValue: false
+        type: struct
+    orderState:
+        definitionFormat: Native
+        description: 'Processing result of an order. Fields: OrderID string, Status string (CONFIRMED — all items reserved; PARTIALLY_CONFIRMED — some items out of stock; TIMED_OUT — order timed out), ConfirmedItems []OrderItemResult, TotalAmount float64, ProcessedAt time.Time.'
+        name: OrderState
+        publicType: false
+        transferByValue: false
+        type: struct
+    unknownType:
+        name: UnknownType
+        publicType: false
+        type: int
+        useAlias: false

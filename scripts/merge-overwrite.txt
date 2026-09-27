@@ -1,0 +1,87 @@
+# Files listed here are overwritten by scripts/merge.generated.sh even when
+# their basename does not contain "generated".
+#
+# Use one exact path relative to the project root per line. Empty lines and
+# lines beginning with # are ignored. Globs and paths outside the project are
+# not supported.
+#
+# Example:
+# Dockerfile
+# service-name/config/config.yaml
+scripts/merge-overwrite.txt
+scripts/dependency-source-cache.generated.sh
+Makefile
+docker-compose.yml
+prometheus.yml
+docker-compose.kubernetes.yml
+docker-compose.dependency-cache.generated.yml
+pyproject.toml
+go.work
+CMakeLists.txt
+CMakePresets.json
+Dockerfile.cmake
+docker/cppboost-packages.txt
+analyticsservice/docker/cppboost-packages.txt
+inventoryservice/docker/cppboost-packages.txt
+orderservice/docker/cppboost-packages.txt
+inventory_service_api/CMakeLists.txt
+model/CMakeLists.txt
+order_service_api/CMakeLists.txt
+analyticsservice/grafana/Dockerfile
+analyticsservice/grafana/dashboards/_lib.libsonnet
+analyticsservice/helm/Chart.yaml
+analyticsservice/helm/values.schema.json
+analyticsservice/helm/templates/NOTES.txt
+analyticsservice/CMakeLists.txt
+analyticsservice/CMakePresets.json
+analyticsservice/Dockerfile
+analyticsservice/pyproject.toml
+analyticsservice/src/analytics_service/internal/functions/__init__.py
+analyticsservice/cmd/service/main.cpp
+analyticsservice/static_config.yaml
+analyticsservice/config/config.yaml
+analyticsservice/config/config_vars.yaml
+analyticsservice/config/config_vars.integration.yaml
+automationservice/grafana/Dockerfile
+automationservice/grafana/dashboards/_lib.libsonnet
+automationservice/helm/Chart.yaml
+automationservice/helm/values.schema.json
+automationservice/helm/templates/NOTES.txt
+automationservice/Dockerfile
+automationservice/pyproject.toml
+automationservice/src/automation_service/internal/functions/__init__.py
+automationservice/cmd/service/main.cpp
+automationservice/static_config.yaml
+automationservice/config/config.yaml
+automationservice/config/config_vars.yaml
+automationservice/config/config_vars.integration.yaml
+inventoryservice/grafana/Dockerfile
+inventoryservice/grafana/dashboards/_lib.libsonnet
+inventoryservice/helm/Chart.yaml
+inventoryservice/helm/values.schema.json
+inventoryservice/helm/templates/NOTES.txt
+inventoryservice/CMakeLists.txt
+inventoryservice/CMakePresets.json
+inventoryservice/Dockerfile
+inventoryservice/pyproject.toml
+inventoryservice/src/inventory_service/internal/functions/__init__.py
+inventoryservice/cmd/service/main.cpp
+inventoryservice/static_config.yaml
+inventoryservice/config/config.yaml
+inventoryservice/config/config_vars.yaml
+inventoryservice/config/config_vars.integration.yaml
+orderservice/grafana/Dockerfile
+orderservice/grafana/dashboards/_lib.libsonnet
+orderservice/helm/Chart.yaml
+orderservice/helm/values.schema.json
+orderservice/helm/templates/NOTES.txt
+orderservice/CMakeLists.txt
+orderservice/CMakePresets.json
+orderservice/Dockerfile
+orderservice/pyproject.toml
+orderservice/src/order_service/internal/functions/__init__.py
+orderservice/cmd/service/main.cpp
+orderservice/static_config.yaml
+orderservice/config/config.yaml
+orderservice/config/config_vars.yaml
+orderservice/config/config_vars.integration.yaml

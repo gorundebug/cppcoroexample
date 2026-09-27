@@ -1,0 +1,65 @@
+services:
+  analyticsservice:
+    image: cppcoroexample-cpp-build:local
+    working_dir: /workspace/source/analyticsservice
+    command:
+      - /workspace/build/analyticsservice/example_analytics_service
+      - --config
+      - /workspace/source/analyticsservice/config/config.yaml
+      - --values
+      - /workspace/source/analyticsservice/config/overrides.integration.generated.yaml
+    volumes:
+      - .:/workspace/source:ro
+      - cpp-cmake-build:/workspace/build
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+    stop_grace_period: 30000ms
+  inventoryservice:
+    image: cppcoroexample-cpp-build:local
+    working_dir: /workspace/source/inventoryservice
+    command:
+      - /workspace/build/inventoryservice/example_inventory_service
+      - --config
+      - /workspace/source/inventoryservice/config/config.yaml
+      - --values
+      - /workspace/source/inventoryservice/config/overrides.integration.generated.yaml
+    volumes:
+      - .:/workspace/source:ro
+      - cpp-cmake-build:/workspace/build
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+    stop_grace_period: 30000ms
+  orderservice:
+    image: cppcoroexample-cpp-build:local
+    working_dir: /workspace/source/orderservice
+    command:
+      - /workspace/build/orderservice/example_order_service
+      - --config
+      - /workspace/source/orderservice/config/config.yaml
+      - --values
+      - /workspace/source/orderservice/config/overrides.integration.generated.yaml
+    volumes:
+      - .:/workspace/source:ro
+      - cpp-cmake-build:/workspace/build
+    depends_on:
+      redpanda:
+        condition: service_healthy
+
+    stop_grace_period: 30000ms
+
+  redpanda:
+    image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/redpandadata/redpanda:v24.2.5
+    command: ["redpanda", "start", "--overprovisioned", "--smp=1", "--memory=512M", "--reserve-memory=0M", "--node-id=0", "--check=false", "--kafka-addr=internal://0.0.0.0:9092", "--advertise-kafka-addr=internal://redpanda:9092"]
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health", "--exit-when-healthy"]
+      interval: 1s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  cpp-cmake-build:
+    name: ${CPPBOOST_BUILD_VOLUME:-cppcoroexample_cpp-cmake-build-v0.2.145}

@@ -1,0 +1,4 @@
+{{ .Chart.Name }} is installed in namespace {{ .Release.Namespace }}.
+
+Inspect metrics through the API proxy:
+  kubectl get --raw "/api/v1/namespaces/{{ .Release.Namespace }}/services/http:{{ include "automationservice.fullname" . }}:{{ .Values.service.httpPort }}/proxy/metrics"
