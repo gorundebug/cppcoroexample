@@ -58,15 +58,12 @@ class ServiceGenerated;
 
   struct ProcessOrderItemGrpcClientFunction final {
     servicelib::grpc_transport::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>* client;
-    void async(
+    boost::asio::awaitable<::inventoryserviceapi::processorderitem::ProcessOrderItemResponse> operator()(
         ::inventoryserviceapi::processorderitem::ProcessOrderItemRequest request,
-        servicelib::datasink::grpc::CallOptions options,
-        std::function<void(std::exception_ptr,
-                           std::optional<::inventoryserviceapi::processorderitem::ProcessOrderItemResponse>)> completion) const {
-      client->template asyncUnary<
+        servicelib::datasink::grpc::CallOptions options) const {
+      return client->template unary<
           &::inventoryserviceapi::InventoryServiceApi::Stub::PrepareAsyncProcessOrderItem, ::inventoryserviceapi::processorderitem::ProcessOrderItemRequest,
-          ::inventoryserviceapi::processorderitem::ProcessOrderItemResponse>(std::move(request), std::move(options),
-                             std::move(completion));
+          ::inventoryserviceapi::processorderitem::ProcessOrderItemResponse>(std::move(request), std::move(options));
     }
   };
   using ProcessOrderItemGrpcSinkEndpoint =
