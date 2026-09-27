@@ -1,7 +1,7 @@
 # C++20 coroutine example
 
 Canonical service graph using [cppcoroservicelib](https://github.com/gorundebug/cppcoroservicelib).
-The runtime is pinned to `v0.2.147`; local development can override
+The runtime is pinned to `v0.2.148`; local development can override
 `SERVICELIB_SOURCE_CONTEXT`. Business handlers and graph calls use C++20
 `co_await`. This repository contains the adapted source; do not overwrite it
 with output from the synchronous Boost generator.
