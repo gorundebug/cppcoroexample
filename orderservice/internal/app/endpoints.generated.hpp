@@ -17,7 +17,7 @@
 
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <agrpc/grpc_context.hpp>
+#include <boost/asio/io_context.hpp>
 
 
 #include "orderservice/config/config.generated.hpp"
@@ -26,7 +26,7 @@
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
 #include <servicelib/datasink/grpc/asio.hpp>
-#include <servicelib/runtime/detail/grpc_client.hpp>
+#include <servicelib/runtime/detail/grpc_callback_client.hpp>
 #include <servicelib/datasource/http/beast.hpp>
 #include <servicelib/datasink/kafka/librdkafka.hpp>
 
@@ -56,32 +56,10 @@ namespace example::order_service::app {
 class ServiceGenerated;
 
 
-  struct ProcessOrderItemGrpcClientFunction final {
-    servicelib::grpc_transport::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>* client;
-    boost::asio::awaitable<::inventoryserviceapi::processorderitem::ProcessOrderItemResponse> operator()(
-        ::inventoryserviceapi::processorderitem::ProcessOrderItemRequest request,
-        servicelib::datasink::grpc::CallOptions options) const {
-      return client->template unary<
-          &::inventoryserviceapi::InventoryServiceApi::Stub::PrepareAsyncProcessOrderItem, ::inventoryserviceapi::processorderitem::ProcessOrderItemRequest,
-          ::inventoryserviceapi::processorderitem::ProcessOrderItemResponse>(std::move(request), std::move(options));
-    }
-  };
-  using ProcessOrderItemGrpcSinkEndpoint =
-      servicelib::datasink::grpc::NoStreamingEndpoint<
-          ::inventoryserviceapi::processorderitem::ProcessOrderItemRequest, ::inventoryserviceapi::processorderitem::ProcessOrderItemResponse, example::model::types::OrderItem, example::model::types::OrderItemResult,
-          functions::ProcessOrderItemSink, ProcessOrderItemGrpcClientFunction, example::order_service::types::OrderState>;
-
   using ProcessOrderHTTPSourceConsumer =
       servicelib::datasource::http::BeastEndpointConsumer<
           example::order_service::types::Order, example::order_service::types::OrderState, std::exception_ptr,
           ServiceGenerated, functions::ProcessOrderSource>;
-
-
-
-  using PublishOrderProcessedKafkaSinkEndpoint =
-      servicelib::datasink::kafka::Endpoint<
-          example::model::types::OrderProcessed, std::monostate, functions::OrderProcessedEndpointSink, std::exception_ptr>;
-
 
 
 

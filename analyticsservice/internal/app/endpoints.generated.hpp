@@ -72,8 +72,6 @@ class ServiceGenerated;
 
 
 
-
-
   using ConsumeOrderProcessedKafkaSourceEndpoint =
       servicelib::datasource::kafka::Endpoint<
           example::model::types::OrderProcessed, example::model::types::OrderProcessed, functions::OrderProcessedEndpointSource, std::exception_ptr>;
@@ -84,7 +82,6 @@ class ServiceGenerated;
 
     servicelib::datasource::kafka::LibrdkafkaConsumerClient client;
   };
-
 
   using AnalyticsOrdersCustomSourceEndpoint =
       servicelib::datasource::localsource::Endpoint<
@@ -101,23 +98,6 @@ class ServiceGenerated;
   using SubstreamAnalyticsInputCustomSourceEndpoint =
       servicelib::datasource::localsource::Endpoint<
           example::analytics_service::types::AnalyticsEvent, std::monostate, functions::SubstreamAnalyticsInputSource, std::exception_ptr>;
-
-  using WriteCycleAnalyticsCustomSinkEndpoint =
-      servicelib::datasink::localsink::Endpoint<
-          example::analytics_service::types::AnalyticsEvent, std::monostate, functions::CycleAnalyticsResultSink, std::exception_ptr>;
-  using WriteJoinedAnalyticsCustomSinkEndpoint =
-      servicelib::datasink::localsink::Endpoint<
-          example::analytics_service::types::AnalyticsResult, std::monostate, functions::JoinedAnalyticsSink, std::exception_ptr>;
-  using WriteHighValueAnalyticsCustomSinkEndpoint =
-      servicelib::datasink::localsink::Endpoint<
-          example::analytics_service::types::AnalyticsResult, std::monostate, functions::HighValueAnalyticsSink, std::exception_ptr>;
-  using WriteStandardAnalyticsCustomSinkEndpoint =
-      servicelib::datasink::localsink::Endpoint<
-          example::analytics_service::types::AnalyticsResult, std::monostate, functions::StandardAnalyticsSink, std::exception_ptr>;
-  using WriteSubstreamAnalyticsCustomSinkEndpoint =
-      servicelib::datasink::localsink::Endpoint<
-          example::analytics_service::types::AnalyticsResult, std::monostate, functions::SubstreamAnalyticsResultSink, std::exception_ptr>;
-
 
   struct ServiceEndpoints final {
     std::shared_ptr<ConsumeOrderProcessedKafkaSourceEndpoint> consume_order_processed;

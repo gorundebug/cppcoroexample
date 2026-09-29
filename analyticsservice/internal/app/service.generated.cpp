@@ -15,11 +15,13 @@ namespace example::analytics_service::app {
 ServiceGenerated::ServiceGenerated(
     boost::asio::any_io_executor executor,
 
+
     std::shared_ptr<const config::Config> config,
     servicelib::log::Logger& logger,
     servicelib::metrics::Metrics& metrics,
     servicelib::tracing::Tracing* tracing)
     : executor_(std::move(executor)),
+
 
       config_(std::move(config)),
       logger_(&logger),
@@ -53,6 +55,7 @@ boost::asio::awaitable<void> ServiceGenerated::start() {
     co_await servicelib::ServiceApp<ServiceGenerated, DataTypes>::start();
     lifecycle_started_ = true;
     servers_.http_server_->Start();
+    // Dedicated listeners are owned and started by their data sources.
     co_await serviceStarted();
   } catch (...) {
     startup_failure = std::current_exception();

@@ -9,7 +9,7 @@
 
 namespace example::inventory_service::app {
 
-void ServiceMakers::initMakers(boost::asio::any_io_executor executor, agrpc::GrpcContext* grpc_context) {
+void ServiceMakers::initMakers(boost::asio::any_io_executor executor, [[maybe_unused]] boost::asio::io_context* io_context) {
   auto& makers_ = *this;
   makers_.get_inventory_item_data = [](servicelib::Context context, servicelib::IServiceEnvironment& environment) {
     return functions::MakeGetInventoryItemData(std::move(context), environment);

@@ -219,6 +219,7 @@ boost::asio::awaitable<void> ServiceFunctions::initFunctions(
     maker_cancellation.request_stop();
     if (first_maker_error) std::rethrow_exception(first_maker_error);
   }
+  co_return;
 }
 
 }  // namespace example::order_service::app

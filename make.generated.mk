@@ -60,7 +60,7 @@ export DOCKER_TARGET := runtime
 DOCKER_COMPOSE := docker compose -f docker-compose.yml $(foreach file,$(DOCKER_COMPOSE_RUNTIME_FILES),-f $(file))
 DOCKER_COMPOSE_DEV := docker compose -f docker-compose.yml $(foreach file,$(DOCKER_COMPOSE_DEV_FILES),-f $(file))
 
-ACT_VERSION := v0.2.148
+ACT_VERSION := v0.2.144
 ACT := $(TOOLS_DIR)/act
 GH_VERSION := v2.67.0
 GH := $(TOOLS_DIR)/gh

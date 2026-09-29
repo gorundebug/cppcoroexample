@@ -4,7 +4,6 @@
 #include <memory>
 #include <atomic>
 
-#include <functional>
 #include <exception>
 #include <future>
 #include <mutex>
@@ -69,73 +68,99 @@ namespace example::analytics_service::app {
 
 class ServiceGenerated;
 
+
+
+
+  using WriteCycleAnalyticsCustomSinkEndpoint =
+      servicelib::datasink::localsink::Endpoint<
+          example::analytics_service::types::AnalyticsEvent, std::monostate, functions::CycleAnalyticsResultSink, std::exception_ptr>;
+  using WriteJoinedAnalyticsCustomSinkEndpoint =
+      servicelib::datasink::localsink::Endpoint<
+          example::analytics_service::types::AnalyticsResult, std::monostate, functions::JoinedAnalyticsSink, std::exception_ptr>;
+  using WriteHighValueAnalyticsCustomSinkEndpoint =
+      servicelib::datasink::localsink::Endpoint<
+          example::analytics_service::types::AnalyticsResult, std::monostate, functions::HighValueAnalyticsSink, std::exception_ptr>;
+  using WriteStandardAnalyticsCustomSinkEndpoint =
+      servicelib::datasink::localsink::Endpoint<
+          example::analytics_service::types::AnalyticsResult, std::monostate, functions::StandardAnalyticsSink, std::exception_ptr>;
+  using WriteSubstreamAnalyticsCustomSinkEndpoint =
+      servicelib::datasink::localsink::Endpoint<
+          example::analytics_service::types::AnalyticsResult, std::monostate, functions::SubstreamAnalyticsResultSink, std::exception_ptr>;
+
+
+
   struct WriteCycleAnalyticsSinkBinding final {
-    std::function<boost::asio::awaitable<void>(servicelib::MessageContext, const example::analytics_service::types::AnalyticsEvent&)>
-        consume;
+    using Endpoint = WriteCycleAnalyticsCustomSinkEndpoint;
+    Endpoint* endpoint{};
     struct Function final {
       WriteCycleAnalyticsSinkBinding* binding;
       boost::asio::awaitable<void> operator()(servicelib::MessageContext context,
                       const example::analytics_service::types::AnalyticsEvent& value) const {
-        if (!binding->consume) {
+        if (!binding->endpoint) {
           throw std::logic_error("sink endpoint is not bound");
         }
-        return binding->consume(std::move(context), value);
+        return binding->endpoint->consume(
+            std::move(context), servicelib::Payload<example::analytics_service::types::AnalyticsEvent>::make(value));
       }
     };
   };
   struct WriteJoinedAnalyticsSinkBinding final {
-    std::function<boost::asio::awaitable<void>(servicelib::MessageContext, const example::analytics_service::types::AnalyticsResult&)>
-        consume;
+    using Endpoint = WriteJoinedAnalyticsCustomSinkEndpoint;
+    Endpoint* endpoint{};
     struct Function final {
       WriteJoinedAnalyticsSinkBinding* binding;
       boost::asio::awaitable<void> operator()(servicelib::MessageContext context,
                       const example::analytics_service::types::AnalyticsResult& value) const {
-        if (!binding->consume) {
+        if (!binding->endpoint) {
           throw std::logic_error("sink endpoint is not bound");
         }
-        return binding->consume(std::move(context), value);
+        return binding->endpoint->consume(
+            std::move(context), servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
       }
     };
   };
   struct WriteHighValueAnalyticsSinkBinding final {
-    std::function<boost::asio::awaitable<void>(servicelib::MessageContext, const example::analytics_service::types::AnalyticsResult&)>
-        consume;
+    using Endpoint = WriteHighValueAnalyticsCustomSinkEndpoint;
+    Endpoint* endpoint{};
     struct Function final {
       WriteHighValueAnalyticsSinkBinding* binding;
       boost::asio::awaitable<void> operator()(servicelib::MessageContext context,
                       const example::analytics_service::types::AnalyticsResult& value) const {
-        if (!binding->consume) {
+        if (!binding->endpoint) {
           throw std::logic_error("sink endpoint is not bound");
         }
-        return binding->consume(std::move(context), value);
+        return binding->endpoint->consume(
+            std::move(context), servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
       }
     };
   };
   struct WriteStandardAnalyticsSinkBinding final {
-    std::function<boost::asio::awaitable<void>(servicelib::MessageContext, const example::analytics_service::types::AnalyticsResult&)>
-        consume;
+    using Endpoint = WriteStandardAnalyticsCustomSinkEndpoint;
+    Endpoint* endpoint{};
     struct Function final {
       WriteStandardAnalyticsSinkBinding* binding;
       boost::asio::awaitable<void> operator()(servicelib::MessageContext context,
                       const example::analytics_service::types::AnalyticsResult& value) const {
-        if (!binding->consume) {
+        if (!binding->endpoint) {
           throw std::logic_error("sink endpoint is not bound");
         }
-        return binding->consume(std::move(context), value);
+        return binding->endpoint->consume(
+            std::move(context), servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
       }
     };
   };
   struct WriteSubstreamAnalyticsSinkBinding final {
-    std::function<boost::asio::awaitable<void>(servicelib::MessageContext, const example::analytics_service::types::AnalyticsResult&)>
-        consume;
+    using Endpoint = WriteSubstreamAnalyticsCustomSinkEndpoint;
+    Endpoint* endpoint{};
     struct Function final {
       WriteSubstreamAnalyticsSinkBinding* binding;
       boost::asio::awaitable<void> operator()(servicelib::MessageContext context,
                       const example::analytics_service::types::AnalyticsResult& value) const {
-        if (!binding->consume) {
+        if (!binding->endpoint) {
           throw std::logic_error("sink endpoint is not bound");
         }
-        return binding->consume(std::move(context), value);
+        return binding->endpoint->consume(
+            std::move(context), servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
       }
     };
   };

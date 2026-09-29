@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `grpc-sink` |
 | File | `orderservice/internal/functions/endpoint/process_order_item_sink.hpp` |
 | Test | `orderservice/internal/functions/endpoint/process_order_item_sink_test.cpp` |
@@ -30,18 +30,19 @@ If the inventory call fails, the caller returns a non-reserved PROCESSING_ERROR 
 
 
 ## Stream types
-- Input: `OrderItem` — `model_cpp/include/example/model/types/order_item.hpp`
-- Output: `OrderItemResult` — `model_cpp/include/example/model/types/order_item_result.hpp`
+- Input: `OrderItem` — `model_cppcoro/include/example/model/types/order_item.hpp`
+- Output: `OrderItemResult` — `model_cppcoro/include/example/model/types/order_item_result.hpp`
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `orderservice/internal/functions/endpoint/process_order_item_sink.hpp` and preserve its generated contract
-- [ ] Inspect input type `OrderItem` in `model_cpp/include/example/model/types/order_item.hpp`
-- [ ] Inspect output type `OrderItemResult` in `model_cpp/include/example/model/types/order_item_result.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Inspect input type `OrderItem` in `model_cppcoro/include/example/model/types/order_item.hpp`
+- [ ] Inspect output type `OrderItemResult` in `model_cppcoro/include/example/model/types/order_item_result.hpp`
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `orderservice/internal/functions/endpoint/process_order_item_sink_test.cpp`
 - [ ] Verify the endpoint/result lifecycle, including completion and error paths
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] orderservice/task7.md — ProcessOrderItemSink — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] orderservice/task7.md — ProcessOrderItemSink — C++/Coro — done`

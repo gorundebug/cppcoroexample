@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `kafka-source` |
 | File | `analyticsservice/internal/functions/endpoint/order_processed_endpoint_source.hpp` |
 | Test | `analyticsservice/internal/functions/endpoint/order_processed_endpoint_source_test.cpp` |
@@ -22,17 +22,18 @@ Consumers decode the event and mark its Kafka message processed only after the p
 
 
 ## Stream types
-- Input: `OrderProcessed` — `model_cpp/include/example/model/types/order_processed.hpp`
-- Output: `OrderProcessed` — `model_cpp/include/example/model/types/order_processed.hpp`
+- Input: `OrderProcessed` — `model_cppcoro/include/example/model/types/order_processed.hpp`
+- Output: `OrderProcessed` — `model_cppcoro/include/example/model/types/order_processed.hpp`
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `analyticsservice/internal/functions/endpoint/order_processed_endpoint_source.hpp` and preserve its generated contract
-- [ ] Inspect input type `OrderProcessed` in `model_cpp/include/example/model/types/order_processed.hpp`
-- [ ] Inspect output type `OrderProcessed` in `model_cpp/include/example/model/types/order_processed.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Inspect input type `OrderProcessed` in `model_cppcoro/include/example/model/types/order_processed.hpp`
+- [ ] Inspect output type `OrderProcessed` in `model_cppcoro/include/example/model/types/order_processed.hpp`
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/endpoint/order_processed_endpoint_source_test.cpp`
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task16.md — OrderProcessedEndpointSource — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task16.md — OrderProcessedEndpointSource — C++/Coro — done`

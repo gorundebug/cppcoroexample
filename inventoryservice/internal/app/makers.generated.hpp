@@ -17,7 +17,7 @@
 
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <agrpc/grpc_context.hpp>
+#include <boost/asio/io_context.hpp>
 
 
 #include "inventoryservice/config/config.generated.hpp"
@@ -61,7 +61,7 @@ struct ServiceMakers final {
         std::shared_ptr<servicelib::http::Router>)> http_server;
 
 
-  void initMakers(boost::asio::any_io_executor executor, agrpc::GrpcContext* grpc_context);
+  void initMakers(boost::asio::any_io_executor executor, boost::asio::io_context* io_context);
 };
 
 }  // namespace example::inventory_service::app

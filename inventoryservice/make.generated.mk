@@ -20,7 +20,7 @@ DEPENDENCY_CONAN_VOLUME ?= dependency-conan2
 
 ifeq ($(strip $(USE_LOCAL_MODULES)),1)
 export MODULE_INVENTORY_SERVICE_API_SOURCE_CONTEXT := ../inventory_service_api
-export MODULE_MODEL_CPP_SOURCE_CONTEXT := ../model_cpp
+export MODULE_MODEL_CPPCORO_SOURCE_CONTEXT := ../model_cppcoro
 endif
 
 ifneq ($(strip $(DEPENDENCY_PROXY_DIR)),)
@@ -43,7 +43,9 @@ build: cpp-tools ## [Docker] Debug compile check from copied sources; does not s
 	@docker compose -f docker-compose.cmake.generated.yml build cpp-check
 
 test: cpp-tools ## [Docker] Build and run all service tests from copied sources
-	@docker compose -f docker-compose.cmake.generated.yml build cpp-test
+	@docker compose -f docker-compose.cmake.generated.yml build cpp-build
+	@docker compose -f docker-compose.cmake.generated.yml run --rm cpp-build
+
 
 release-build: docker-build ## [Docker] Alias of docker-build
 
@@ -95,7 +97,7 @@ clean: ## Remove CMake build artifacts
 docker-build: cpp-tools ## [Docker] Build the optimized autonomous runtime image from copied sources
 	@docker compose -f docker-compose.cmake.generated.yml build inventoryservice-runtime
 
-docker-build-dev: cpp-tools ## Build this service in the source-mounted Boost C++ development image
+docker-build-dev: cpp-tools ## Build this service in the source-mounted C++ development image
 	@docker compose -f docker-compose.cmake.generated.yml build cpp-build
 	@docker compose -f docker-compose.cmake.generated.yml run --rm \
 		-v "$(CURDIR):/workspace/source:ro" cpp-build

@@ -17,7 +17,7 @@
 
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <agrpc/grpc_context.hpp>
+#include <boost/asio/io_context.hpp>
 
 
 #include "orderservice/config/config.generated.hpp"
@@ -26,7 +26,7 @@
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
 #include <servicelib/datasink/grpc/asio.hpp>
-#include <servicelib/runtime/detail/grpc_client.hpp>
+#include <servicelib/runtime/detail/grpc_callback_client.hpp>
 #include <servicelib/datasource/http/beast.hpp>
 #include <servicelib/datasink/kafka/librdkafka.hpp>
 
@@ -82,11 +82,11 @@ struct ServiceMakers final {
         std::shared_ptr<servicelib::http::Router>)> http_server;
 
     std::function<boost::asio::awaitable<std::unique_ptr<
-        servicelib::grpc_transport::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>>>(
+        servicelib::grpc_transport::callback::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>>>(
         servicelib::Context, servicelib::IServiceEnvironment&,
         const servicelib::config::GrpcDataConnectorConfig&)> inventory_service_api_client;
 
-  void initMakers(boost::asio::any_io_executor executor, agrpc::GrpcContext* grpc_context);
+  void initMakers(boost::asio::any_io_executor executor, boost::asio::io_context* io_context);
 };
 
 }  // namespace example::order_service::app

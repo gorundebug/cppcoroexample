@@ -10,9 +10,10 @@
       "name": "host-debug",
       "displayName": "Host debug (optional fast path)",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/host",
+      "binaryDir": "${sourceDir}/build/host-epoll",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
+        "CPP_CORO_IO_BACKEND": "epoll",
         "FETCH_CPP_DEPENDENCIES": "ON",
         "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
       }
@@ -21,9 +22,10 @@
       "name": "host-release",
       "displayName": "Host release (optional fast path)",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/host",
+      "binaryDir": "${sourceDir}/build/host-epoll",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
+        "CPP_CORO_IO_BACKEND": "epoll",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
         "FETCH_CPP_DEPENDENCIES": "ON",
         "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
@@ -36,6 +38,7 @@
       "binaryDir": "/workspace/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
+        "CPP_CORO_IO_BACKEND": "epoll",
         "FETCH_CPP_DEPENDENCIES": "OFF",
         "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"
       }
@@ -47,6 +50,7 @@
       "binaryDir": "/workspace/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
+        "CPP_CORO_IO_BACKEND": "epoll",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE": "ON",
         "FETCH_CPP_DEPENDENCIES": "OFF",
         "SERVICELIB_SOURCE_DIR": "$env{SERVICELIB_SOURCE_DIR}"

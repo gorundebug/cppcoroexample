@@ -12,7 +12,7 @@ local jobFilter = 'job=~"$job"';
 lib.dashboard(
   title='%s / Kafka Client (librdkafka)' % lib.svc,
   uid='%s-kafka-client' % lib.svc,
-  tags=['kafka', 'librdkafka', 'cppboost'],
+  tags=['kafka', 'librdkafka', 'cppcoro'],
   variables=[lib.dsVar, lib.jobVar('kafka_client_brokers')],
   panels=[
     lib.row('Connections'),

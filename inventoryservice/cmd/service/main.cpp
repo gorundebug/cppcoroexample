@@ -17,8 +17,7 @@
 #include <grpcpp/server_builder.h>
 
 
-#include <servicelib/runtime/detail/asio_runtime.hpp>
-#include <servicelib/runtime/detail/grpc_runtime.hpp>
+#include <servicelib/runtime/detail/coro_runtime.hpp>
 
 #include <servicelib/runtime/config/command_line.hpp>
 #include <servicelib/runtime/config/loader.hpp>
@@ -52,21 +51,21 @@ void ArmShutdownDeadline(std::chrono::steady_clock::time_point deadline, int exi
 
 int main(int argc, char* argv[]) {
   try {
-    servicelib::async::ConfigureGrpcRuntimeDefaults();
 
     const auto options = servicelib::config::CommandLine::Parse(argc, argv);
     using Config = example::inventory_service::config::Config;
     namespace otel = servicelib::telemetry::opentelemetry_adapter;
-    using ServiceRuntime = servicelib::async::GrpcRuntime;
+    using ServiceRuntime = servicelib::async::CoroRuntime;
     // A timed-out shutdown retains this complete host until admitted work
     // finishes. Destruction order keeps dependencies alive through the service.
     struct ServiceLifetime final {
       std::unique_ptr<servicelib::metrics::PrometheusMetrics> prometheus_metrics;
+      std::unique_ptr<ServiceRuntime> runtime;
       std::unique_ptr<otel::OpenTelemetryLogger> otlp_logs;
       std::unique_ptr<otel::OpenTelemetryTracing> tracing;
       std::unique_ptr<example::inventory_service::app::GrpcServicesGenerated> grpc_services;
       std::unique_ptr<::grpc::Server> grpc_server;
-      std::unique_ptr<ServiceRuntime> runtime;
+
       std::unique_ptr<example::inventory_service::app::Service> service;
     };
     auto lifetime = std::make_shared<ServiceLifetime>();
@@ -97,6 +96,11 @@ int main(int argc, char* argv[]) {
     const auto config = loader.GetConfig();
     const auto& own_service_config =
         config->services.inventoryService;
+    lifetime->runtime = std::make_unique<ServiceRuntime>(
+        ServiceRuntime::Options{.workers = options.workers,
+         .unhandledException = {}, .metrics = metrics});
+    auto& runtime = *lifetime->runtime;
+    runtime.start();
     auto& otlp_logs = lifetime->otlp_logs;
     auto& tracing = lifetime->tracing;
     servicelib::log::Logger* service_logger = &bootstrap_logger;
@@ -127,23 +131,15 @@ int main(int argc, char* argv[]) {
                               std::to_string(own_service_config.grpcPort);
     grpc_builder.AddListeningPort(
         grpc_address, ::grpc::InsecureServerCredentials());
-    auto grpc_queue =
-        servicelib::async::GrpcRuntime::AddCompletionQueue(grpc_builder);
     auto& grpc_server = lifetime->grpc_server;
     grpc_server = grpc_builder.BuildAndStart();
     if (!grpc_server) {
       throw std::runtime_error("failed to start gRPC server at " +
                                grpc_address);
     }
-    lifetime->runtime = std::make_unique<ServiceRuntime>(
-        ServiceRuntime::Options{.workers = options.workers,
-         .unhandledException = {},
-         .metrics = metrics},
-        std::move(grpc_queue));
 
-    auto& runtime = *lifetime->runtime;
     lifetime->service = std::make_unique<example::inventory_service::app::Service>(runtime.executor(),
-                                    runtime.grpcContext(),
+                                    runtime.ioContext(),
                                     config, *service_logger,
                                     *metrics, tracing.get());
     auto& service = *lifetime->service;
@@ -171,15 +167,27 @@ int main(int argc, char* argv[]) {
       grpc_server->Shutdown(std::chrono::system_clock::now() +
                             remaining);
       loader.Stop();
-      // Only the host thread blocks here; worker execution remains coroutine-based.
       boost::asio::co_spawn(runtime.executor(),
           service.stop(servicelib::Context{}.withDeadline(shutdown_deadline)),
           boost::asio::use_future).get();
       boost::asio::co_spawn(runtime.executor(), service.waitStopped(),
           boost::asio::use_future).get();
+      grpc_server->Wait();
+      grpc_server.reset();
+      lifetime->grpc_services.reset();
+      lifetime->service.reset();
+      const bool tracing_flushed = !tracing || tracing->forceFlush();
+      const bool tracing_stopped = !tracing || tracing->shutdown();
+      const bool logs_flushed = !otlp_logs || otlp_logs->forceFlush();
+      const bool logs_stopped = !otlp_logs || otlp_logs->shutdown();
+      tracing.reset();
+      otlp_logs.reset();
       runtime.stop();
       runtime.join();
       runtime_shutdown = true;
+      if (!tracing_flushed || !tracing_stopped || !logs_flushed || !logs_stopped) {
+        throw std::runtime_error("failed to flush OpenTelemetry providers");
+      }
     };
     // The main thread waits for signals independently of business workers.
     // A blocked worker must not prevent the shutdown watchdog from starting.
@@ -190,7 +198,6 @@ int main(int argc, char* argv[]) {
       begin_shutdown(EXIT_SUCCESS);
     });
     try {
-      runtime.start();
       boost::asio::co_spawn(runtime.executor(), service.start(), boost::asio::use_future).get();
       loader.Start(std::chrono::seconds{5},
                    [](std::shared_ptr<const servicelib::config::RuntimeConfig>
@@ -198,19 +205,10 @@ int main(int argc, char* argv[]) {
                      servicelib::config::RuntimeConfigRegistry::Publish(
                          std::move(next_config));
                    });
-    grpc_services.registerHandlers(runtime.grpcContext(), service,
-                                   runtime.grpcExecutor());
+    grpc_services.registerHandlers(service, runtime.executor());
 
       shutdown_signals_context.run();
       shutdown_runtime();
-      const bool tracing_flushed = !tracing || tracing->forceFlush();
-      const bool tracing_stopped = !tracing || tracing->shutdown();
-      const bool logs_flushed = !otlp_logs || otlp_logs->forceFlush();
-      const bool logs_stopped = !otlp_logs || otlp_logs->shutdown();
-      if (!tracing_flushed || !tracing_stopped || !logs_flushed ||
-          !logs_stopped) {
-        throw std::runtime_error("failed to flush OpenTelemetry providers");
-      }
     } catch (...) {
       begin_shutdown(EXIT_FAILURE);
       try {

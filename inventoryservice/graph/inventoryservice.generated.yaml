@@ -57,11 +57,11 @@ services:
         kubernetesWorkloadType: Deployment
         links:
             link1:
-                callSemantics: FunctionCall
+                callSemantics: ParallelCall
                 from: getInventoryItemData
                 to: mergeInventoryResult
             link2:
-                callSemantics: FunctionCall
+                callSemantics: PriorityTaskPool
                 from: processInventoryItem
                 poolName: Inventory Priority Workers
                 priority: 10
@@ -116,7 +116,7 @@ services:
                     source: mergeInventoryResult
                     type: Input
                     valueType: orderItem
-        programmingLanguage: CppBoost
+        programmingLanguage: CppCoro
         readinessHandler: health/ready
         shutdownTimeout: 30000
         startupHandler: health/startup

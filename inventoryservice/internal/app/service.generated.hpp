@@ -22,7 +22,7 @@ class ServiceGenerated
     : public servicelib::ServiceApp<ServiceGenerated, DataTypes> {
  public:
   ServiceGenerated(boost::asio::any_io_executor executor,
-                   agrpc::GrpcContext& grpc_context,
+                   boost::asio::io_context& io_context,
 
                    std::shared_ptr<const config::Config> config,
                    servicelib::log::Logger& logger,
@@ -75,7 +75,7 @@ class ServiceGenerated
   ServiceSubStreams substreams_;
 
   boost::asio::any_io_executor executor_;
-  agrpc::GrpcContext* grpc_context_;
+  boost::asio::io_context* io_context_;
 
   std::shared_ptr<const config::Config> config_;
   std::shared_ptr<const servicelib::config::RuntimeConfig> runtime_config_;

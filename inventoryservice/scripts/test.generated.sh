@@ -15,8 +15,8 @@ esac
 
 exec docker compose -f docker-compose.cmake.generated.yml run --build --rm \
   -e CPP_CMAKE_PRESET="$preset" \
-  -e CPPBOOSTSERVICELIB_PROFILING="${CPPBOOSTSERVICELIB_PROFILING:-OFF}" \
-  -e CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS="${CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS:-OFF}" \
+  -e CPPCOROSERVICELIB_PROFILING="${CPPCOROSERVICELIB_PROFILING:-OFF}" \
+  -e CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS="${CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS:-OFF}" \
   cpp-build \
   /bin/bash -lc \
   'source scripts/configure-git-auth.generated.sh &&
@@ -28,8 +28,8 @@ exec docker compose -f docker-compose.cmake.generated.yml run --build --rm \
      --fresh \
      -DCMAKE_TOOLCHAIN_FILE="$conan_toolchain" \
      -DFETCH_CPP_DEPENDENCIES=OFF \
-     -DCPPBOOSTSERVICELIB_PROFILING="$CPPBOOSTSERVICELIB_PROFILING" \
-     -DCPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS="$CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS" &&
+     -DCPPCOROSERVICELIB_PROFILING="$CPPCOROSERVICELIB_PROFILING" \
+     -DCPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS="$CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS" &&
    ./scripts/run_with_progress.generated.sh "Build $CPP_CMAKE_PRESET" cmake --build --preset "$CPP_CMAKE_PRESET" --parallel &&
    ./scripts/run_with_progress.generated.sh "Test $CPP_CMAKE_PRESET" \
      ctest --test-dir /workspace/build --output-on-failure --no-tests=error'

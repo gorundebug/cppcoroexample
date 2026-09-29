@@ -15,7 +15,7 @@
 #include <boost/asio/signal_set.hpp>
 
 
-#include <servicelib/runtime/detail/asio_runtime.hpp>
+#include <servicelib/runtime/detail/coro_runtime.hpp>
 
 #include <servicelib/runtime/config/command_line.hpp>
 #include <servicelib/runtime/config/loader.hpp>
@@ -52,14 +52,15 @@ int main(int argc, char* argv[]) {
     const auto options = servicelib::config::CommandLine::Parse(argc, argv);
     using Config = example::analytics_service::config::Config;
     namespace otel = servicelib::telemetry::opentelemetry_adapter;
-    using ServiceRuntime = servicelib::async::Runtime;
+    using ServiceRuntime = servicelib::async::CoroRuntime;
     // A timed-out shutdown retains this complete host until admitted work
     // finishes. Destruction order keeps dependencies alive through the service.
     struct ServiceLifetime final {
       std::unique_ptr<servicelib::metrics::PrometheusMetrics> prometheus_metrics;
+      std::unique_ptr<ServiceRuntime> runtime;
       std::unique_ptr<otel::OpenTelemetryLogger> otlp_logs;
       std::unique_ptr<otel::OpenTelemetryTracing> tracing;
-      std::unique_ptr<ServiceRuntime> runtime;
+
       std::unique_ptr<example::analytics_service::app::Service> service;
     };
     auto lifetime = std::make_shared<ServiceLifetime>();
@@ -90,6 +91,12 @@ int main(int argc, char* argv[]) {
     const auto config = loader.GetConfig();
     const auto& own_service_config =
         config->services.analyticsService;
+    lifetime->runtime = std::make_unique<ServiceRuntime>(
+        ServiceRuntime::Options{.workers = options.workers,
+         .unhandledException = {}, .metrics = metrics,
+         .blockingWorkers = options.workers});
+    auto& runtime = *lifetime->runtime;
+    runtime.start();
     auto& otlp_logs = lifetime->otlp_logs;
     auto& tracing = lifetime->tracing;
     servicelib::log::Logger* service_logger = &bootstrap_logger;
@@ -112,12 +119,7 @@ int main(int argc, char* argv[]) {
         }
         break;
     }
-    lifetime->runtime = std::make_unique<ServiceRuntime>(
-        ServiceRuntime::Options{.workers = options.workers,
-         .unhandledException = {},
-         .metrics = metrics});
 
-    auto& runtime = *lifetime->runtime;
     lifetime->service = std::make_unique<example::analytics_service::app::Service>(runtime.executor(),
                                     config, *service_logger,
                                     *metrics, tracing.get());
@@ -140,15 +142,24 @@ int main(int argc, char* argv[]) {
       if (runtime_shutdown) return;
       begin_shutdown(EXIT_SUCCESS);
       loader.Stop();
-      // Only the host thread blocks here; worker execution remains coroutine-based.
       boost::asio::co_spawn(runtime.executor(),
           service.stop(servicelib::Context{}.withDeadline(shutdown_deadline)),
           boost::asio::use_future).get();
       boost::asio::co_spawn(runtime.executor(), service.waitStopped(),
           boost::asio::use_future).get();
+      lifetime->service.reset();
+      const bool tracing_flushed = !tracing || tracing->forceFlush();
+      const bool tracing_stopped = !tracing || tracing->shutdown();
+      const bool logs_flushed = !otlp_logs || otlp_logs->forceFlush();
+      const bool logs_stopped = !otlp_logs || otlp_logs->shutdown();
+      tracing.reset();
+      otlp_logs.reset();
       runtime.stop();
       runtime.join();
       runtime_shutdown = true;
+      if (!tracing_flushed || !tracing_stopped || !logs_flushed || !logs_stopped) {
+        throw std::runtime_error("failed to flush OpenTelemetry providers");
+      }
     };
     // The main thread waits for signals independently of business workers.
     // A blocked worker must not prevent the shutdown watchdog from starting.
@@ -159,7 +170,6 @@ int main(int argc, char* argv[]) {
       begin_shutdown(EXIT_SUCCESS);
     });
     try {
-      runtime.start();
       boost::asio::co_spawn(runtime.executor(), service.start(), boost::asio::use_future).get();
       loader.Start(std::chrono::seconds{5},
                    [](std::shared_ptr<const servicelib::config::RuntimeConfig>
@@ -170,14 +180,6 @@ int main(int argc, char* argv[]) {
 
       shutdown_signals_context.run();
       shutdown_runtime();
-      const bool tracing_flushed = !tracing || tracing->forceFlush();
-      const bool tracing_stopped = !tracing || tracing->shutdown();
-      const bool logs_flushed = !otlp_logs || otlp_logs->forceFlush();
-      const bool logs_stopped = !otlp_logs || otlp_logs->shutdown();
-      if (!tracing_flushed || !tracing_stopped || !logs_flushed ||
-          !logs_stopped) {
-        throw std::runtime_error("failed to flush OpenTelemetry providers");
-      }
     } catch (...) {
       begin_shutdown(EXIT_FAILURE);
       try {

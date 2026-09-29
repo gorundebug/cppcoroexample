@@ -30,12 +30,7 @@ void ServiceEndpoints::initDataSinks(ServiceGenerated& service, const config::Co
       streams_.process_order_item.get(),
       *functions_.process_order_item_sink,
       ProcessOrderItemGrpcClientFunction{&*clients_.inventory_service_api_client});
-  bindings_.process_order_item.consume =
-      [endpoint = endpoints_.process_order_item.get()](
-          servicelib::MessageContext context, const example::model::types::OrderItem& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::model::types::OrderItem>::make(value));
-      };
+  bindings_.process_order_item.endpoint = endpoints_.process_order_item.get();
   connectors_.inventory_service_api_sink->addEndpoint(endpoints_.process_order_item);
   service.registerDataSink(connectors_.inventory_service_api_sink);
 
@@ -46,12 +41,7 @@ void ServiceEndpoints::initDataSinks(ServiceGenerated& service, const config::Co
   endpoints_.publish_order_processed = std::make_shared<PublishOrderProcessedKafkaSinkEndpoint>(
       streams_.publish_order_processed.get(), *clients_.publish_order_processed_producer,
       *functions_.order_processed_endpoint_sink);
-  bindings_.publish_order_processed.consume =
-      [endpoint = endpoints_.publish_order_processed.get()](
-          servicelib::MessageContext context, const example::model::types::OrderProcessed& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::model::types::OrderProcessed>::make(value));
-      };
+  bindings_.publish_order_processed.endpoint = endpoints_.publish_order_processed.get();
   service.registerDataSink(endpoints_.publish_order_processed);
 
 }

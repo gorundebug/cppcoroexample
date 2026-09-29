@@ -58,5 +58,5 @@ for service, port in services:
         ) as response:
             assert response.status == 200
 
-print("generated Boost C++ integration lifecycle: PASS")
+print("generated C++ integration lifecycle: PASS")
 PY

@@ -816,7 +816,7 @@ services:
                     source: invokeAnalyticsSubstream
                     type: Sink
                     valueType: analyticsResult
-        programmingLanguage: CppBoost
+        programmingLanguage: CppCoro
         readinessHandler: health/ready
         shutdownTimeout: 30000
         startupHandler: health/startup
@@ -950,13 +950,13 @@ services:
         kubernetesWorkloadType: Deployment
         links:
             link1:
-                callSemantics: FunctionCall
+                callSemantics: PriorityTaskPool
                 from: callSequentialActivityA
                 poolName: Default Pool
                 priority: 2
                 to: callSequentialActivityB
             link2:
-                callSemantics: FunctionCall
+                callSemantics: TaskPool
                 from: callSequentialActivityB
                 poolName: Default Pool
                 to: processWorkflowJob
@@ -977,7 +977,7 @@ services:
                 from: consumeFanOutActivityC
                 to: processFanOutActivityC
             link7:
-                callSemantics: FunctionCall
+                callSemantics: TaskPool
                 from: consumeFanOutWorkflowJob
                 poolName: Default Pool
                 to: callFanOutActivityA
@@ -994,19 +994,19 @@ services:
                 from: consumeWorkflowJob
                 to: workflowPause
             link11:
-                callSemantics: FunctionCall
+                callSemantics: PriorityTaskPool
                 from: splitActivityAResult
                 poolName: Default Pool
                 priority: 2
                 to: callFanOutActivityB
             link12:
-                callSemantics: FunctionCall
+                callSemantics: PriorityTaskPool
                 from: splitActivityAResult
                 poolName: Default Pool
                 priority: 7
                 to: callFanOutActivityC
             link13:
-                callSemantics: FunctionCall
+                callSemantics: TaskPool
                 from: workflowPause
                 poolName: Default Pool
                 to: callSequentialActivityA
@@ -1358,11 +1358,11 @@ services:
         kubernetesWorkloadType: Deployment
         links:
             link1:
-                callSemantics: FunctionCall
+                callSemantics: ParallelCall
                 from: getInventoryItemData
                 to: mergeInventoryResult
             link2:
-                callSemantics: FunctionCall
+                callSemantics: PriorityTaskPool
                 from: processInventoryItem
                 poolName: Inventory Priority Workers
                 priority: 10
@@ -1417,7 +1417,7 @@ services:
                     source: mergeInventoryResult
                     type: Input
                     valueType: orderItem
-        programmingLanguage: CppBoost
+        programmingLanguage: CppCoro
         readinessHandler: health/ready
         shutdownTimeout: 30000
         startupHandler: health/startup
@@ -1478,17 +1478,17 @@ services:
                 from: mergeResults
                 to: splitOrderResult
             link2:
-                callSemantics: FunctionCall
+                callSemantics: TaskPool
                 from: processOrder
                 poolName: Default Pool
                 priority: 1
                 to: splitPipeline
             link3:
-                callSemantics: FunctionCall
+                callSemantics: ParallelCall
                 from: splitPipeline
                 to: processOrderItems
             link4:
-                callSemantics: FunctionCall
+                callSemantics: ParallelCall
                 from: splitPipeline
                 to: softDeadline
         livenessHandler: health/live
@@ -1598,7 +1598,7 @@ services:
                     name: Split Pipeline
                     source: processOrder
                     type: Split
-        programmingLanguage: CppBoost
+        programmingLanguage: CppCoro
         readinessHandler: health/ready
         shutdownTimeout: 30000
         startupHandler: health/startup

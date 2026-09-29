@@ -34,28 +34,34 @@ cp -R "${service_dir}/." "${output_dir}/"
 # exist or be publicly reachable. The standalone CMake project prefers this
 # directory and retains its explicit external/fetch fallbacks.
 module_dirs=()
+module_cmake_dirs=()
 target_name=""
 case "${service_name}" in
   analyticsservice)
     target_name="example_analytics_service"
-    module_dirs=("model_cpp" )
+    module_dirs=("model_cppcoro" )
+    module_cmake_dirs=("model_cppcoro" )
     ;;
   inventoryservice)
     target_name="example_inventory_service"
-    module_dirs=("inventory_service_api" "model_cpp" )
+    module_dirs=("inventory_service_api" "model_cppcoro" )
+    module_cmake_dirs=("inventory_service_api/cppcoro" "model_cppcoro" )
     ;;
   orderservice)
     target_name="example_order_service"
-    module_dirs=("inventory_service_api" "model_cpp" "order_service_api" )
+    module_dirs=("inventory_service_api" "model_cppcoro" "order_service_api" )
+    module_cmake_dirs=("inventory_service_api/cppcoro" "model_cppcoro" "order_service_api/cppcoro" )
     ;;
-  *) echo "unknown generated Boost C++ service: ${service_name}" >&2; exit 1 ;;
+  *) echo "unknown generated C++ service: ${service_name}" >&2; exit 1 ;;
 esac
 mkdir -p "${output_dir}/modules"
-for module_dir in "${module_dirs[@]}"; do
+for module_dir in "${module_cmake_dirs[@]}"; do
   if [[ ! -f "${module_dir}/CMakeLists.txt" ]]; then
     echo "C++ contract module is missing: ${module_dir}" >&2
     exit 1
   fi
+done
+for module_dir in "${module_dirs[@]}"; do
   cp -R "${module_dir}" "${output_dir}/modules/${module_dir}"
 done
 

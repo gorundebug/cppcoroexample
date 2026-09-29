@@ -17,7 +17,7 @@
 
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <agrpc/grpc_context.hpp>
+#include <boost/asio/io_context.hpp>
 
 
 #include "orderservice/config/config.generated.hpp"
@@ -26,7 +26,7 @@
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
 #include <servicelib/datasink/grpc/asio.hpp>
-#include <servicelib/runtime/detail/grpc_client.hpp>
+#include <servicelib/runtime/detail/grpc_callback_client.hpp>
 #include <servicelib/datasource/http/beast.hpp>
 #include <servicelib/datasink/kafka/librdkafka.hpp>
 

@@ -35,7 +35,7 @@ services:
         DEPENDENCY_APT_UBUNTU_PORTS_URL: ${DEPENDENCY_APT_UBUNTU_PORTS_URL:-}
       additional_contexts:
         servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.148}
-        module-model_cpp: ${MODULE_MODEL_CPP_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.148}
+        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.148}
       secrets:
         - dependency_conan_credential
     extra_hosts:
@@ -59,7 +59,7 @@ services:
       DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
       DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
       DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
-      CPPBOOSTSERVICELIB_CONAN_LOCKFILE: ${CPPBOOSTSERVICELIB_CONAN_LOCKFILE:-}
+      CPPCOROSERVICELIB_CONAN_LOCKFILE: ${CPPCOROSERVICELIB_CONAN_LOCKFILE:-}
       DEPENDENCY_CONAN_CREDENTIAL_FILE: /run/secrets/dependency_conan_credential
       DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
       CONAN_HOME: /conan
@@ -95,17 +95,17 @@ services:
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
         PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-}
         RUNTIME_STRIP: ${RUNTIME_STRIP:-ON}
-        CPPBOOST_LTO: ${CPPBOOST_LTO:-ON}
+        CPPCORO_LTO: ${CPPCORO_LTO:-ON}
         EXAMPLE_PROFILE: ${EXAMPLE_PROFILE:-function-call}
       additional_contexts:
         servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.148}
-        module-model_cpp: ${MODULE_MODEL_CPP_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.148}
+        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.148}
       secrets:
         - dependency_conan_credential
 
 volumes:
   cpp-cmake-build:
-    name: cppcoroexample_analyticsservice_cpp-cmake-build
+    name: cppcoroexample_analyticsservice_cpp-cmake-build-epoll
   cpp-ccache:
   cpp-conan2:
     external: true

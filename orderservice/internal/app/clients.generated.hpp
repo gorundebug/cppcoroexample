@@ -17,7 +17,7 @@
 
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <agrpc/grpc_context.hpp>
+#include <boost/asio/io_context.hpp>
 
 
 #include "orderservice/config/config.generated.hpp"
@@ -26,7 +26,7 @@
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
 #include <servicelib/datasink/grpc/asio.hpp>
-#include <servicelib/runtime/detail/grpc_client.hpp>
+#include <servicelib/runtime/detail/grpc_callback_client.hpp>
 #include <servicelib/datasource/http/beast.hpp>
 #include <servicelib/datasink/kafka/librdkafka.hpp>
 
@@ -55,9 +55,10 @@ namespace example::order_service::app {
 class ServiceGenerated;
 
 struct ServiceClients final {
-  std::unique_ptr<servicelib::grpc_transport::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>> inventory_service_api_client;
+  std::unique_ptr<servicelib::grpc_transport::callback::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>> inventory_service_api_client;
   std::unique_ptr<servicelib::datasink::kafka::LibrdkafkaProducerClient> publish_order_processed_producer;
   boost::asio::awaitable<void> stop() {
+    if (inventory_service_api_client) co_await inventory_service_api_client->Stop();
     co_return;
   }
 };

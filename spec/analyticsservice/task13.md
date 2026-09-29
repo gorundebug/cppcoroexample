@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `multiJoin` |
 | File | `analyticsservice/internal/functions/multijoinanalytics/multi_join_analytics_events.hpp` |
 | Test | `analyticsservice/internal/functions/multijoinanalytics/multi_join_analytics_events_test.cpp` |
@@ -25,12 +25,13 @@ Combine matching order, payment, and shipment analytics events.
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `analyticsservice/internal/functions/multijoinanalytics/multi_join_analytics_events.hpp` and preserve its generated contract
 - [ ] Inspect input type `AnalyticsEvent` in `analyticsservice/internal/types/analytics_event.hpp`
 - [ ] Inspect output type `AnalyticsResult` in `analyticsservice/internal/types/analytics_result.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/multijoinanalytics/multi_join_analytics_events_test.cpp`
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task13.md — MultiJoinAnalyticsEvents — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task13.md — MultiJoinAnalyticsEvents — C++/Coro — done`

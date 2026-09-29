@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `map` |
 | File | `analyticsservice/internal/functions/cycleanalytics/advance_cycle_analytics.hpp` |
 | Test | `analyticsservice/internal/functions/cycleanalytics/advance_cycle_analytics_test.cpp` |
@@ -24,12 +24,13 @@ Increment the cycle counter while preserving the analytics event identity.
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `analyticsservice/internal/functions/cycleanalytics/advance_cycle_analytics.hpp` and preserve its generated contract
 - [ ] Inspect input type `AnalyticsEvent` in `analyticsservice/internal/types/analytics_event.hpp`
 - [ ] Inspect output type `AnalyticsEvent` in `analyticsservice/internal/types/analytics_event.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/cycleanalytics/advance_cycle_analytics_test.cpp`
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task1.md — AdvanceCycleAnalytics — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task1.md — AdvanceCycleAnalytics — C++/Coro — done`

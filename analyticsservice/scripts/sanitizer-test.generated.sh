@@ -7,8 +7,8 @@ action="${2:-test}"
 case "$sanitizer" in
   asan)
     cmake_options=(
-      -DCPPBOOSTSERVICELIB_ASAN=ON
-      -DCPPBOOSTSERVICELIB_UBSAN=ON
+      -DCPPCOROSERVICELIB_ASAN=ON
+      -DCPPCOROSERVICELIB_UBSAN=ON
     )
     conan_sanitizer=AddressUndefined
     conan_compile_flags="['-fsanitize=address,undefined','-fno-omit-frame-pointer','-g']"
@@ -17,7 +17,7 @@ case "$sanitizer" in
     conan_asan_only_link_flags="['-fsanitize=address','--rtlib=compiler-rt']"
     ;;
   tsan)
-    cmake_options=(-DCPPBOOSTSERVICELIB_TSAN=ON)
+    cmake_options=(-DCPPCOROSERVICELIB_TSAN=ON)
     conan_sanitizer=Thread
     # gRPC's supported TSan configuration defines GRPC_TSAN in addition to
     # instrumenting the complete host dependency graph.
@@ -96,7 +96,7 @@ docker compose -f docker-compose.cmake.generated.yml run --build --rm \
          ctest --test-dir "$build_dir" --output-on-failure
        ;;
      tsan)
-       TSAN_OPTIONS=halt_on_error=1 \
+       TSAN_OPTIONS="halt_on_error=1:suppressions=/workspace/source/scripts/tsan-suppressions.generated.txt" \
          ctest --test-dir "$build_dir" --output-on-failure
        ;;
    esac; fi

@@ -1,6 +1,6 @@
 # Analytics Service
 
-Standalone generated Boost C++ service. All compile, test and runtime commands
+Standalone generated C++ service. All compile, test and runtime commands
 use the generated Docker toolchain, so the host needs only Make, Docker and
 Docker Compose v2.
 
@@ -47,7 +47,7 @@ Docker runtime builds enable it by default as well. Debug and sanitizer build
 settings are unchanged. To disable LTO for a Docker runtime build:
 
 ```bash
-CPPBOOST_LTO=OFF make docker-up
+CPPCORO_LTO=OFF make docker-up
 ```
 
 For a host release build, configure with

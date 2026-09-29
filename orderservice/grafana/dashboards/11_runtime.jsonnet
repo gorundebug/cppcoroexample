@@ -1,6 +1,6 @@
 // Dashboard: Boost.Asio Runtime
 //
-// Source: cppboostservicelib runtime diagnostics sampled from the shared Asio
+// Source: cppcoroservicelib runtime diagnostics sampled from the shared Asio
 // worker executor. No Go, GC or allocator series are fabricated for C++.
 
 local g = import 'github.com/grafana/grafonnet/gen/grafonnet-v11.0.0/main.libsonnet';

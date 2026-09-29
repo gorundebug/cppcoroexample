@@ -29,10 +29,10 @@ user-owned extension points.
 
 | Service | Language | Directory |
 |---------|----------|-----------|
-| `Analytics Service` | `C++/Boost` | `analyticsservice/` |
+| `Analytics Service` | `C++/Coro` | `analyticsservice/` |
 | `Automation Service` | `Go` | `automationservice/` |
-| `Inventory Service` | `C++/Boost` | `inventoryservice/` |
-| `Order Service` | `C++/Boost` | `orderservice/` |
+| `Inventory Service` | `C++/Coro` | `inventoryservice/` |
+| `Order Service` | `C++/Coro` | `orderservice/` |
 
 
 ## Go rules
@@ -62,14 +62,14 @@ user-owned extension points.
 
 
 
-## C++/Boost rules
+## C++/Coro rules
 
 - Function objects must satisfy the concepts checked by generated stream
   construction. Keep the exact `operator()`/handler method surface in the
   generated user-owned header.
 - Treat `servicelib::MessageContext` as request/message metadata and propagate
   it through collectors. Respect `Payload<T>` ownership; do not retain borrowed
-  references beyond a synchronous call.
+  references after the owning payload is released, including across suspension.
 - C++ builds and tests are Docker-canonical:
   - build: `./scripts/build.generated.sh`
   - test: `./scripts/test.generated.sh`
@@ -77,8 +77,11 @@ user-owned extension points.
 - Regenerate protobuf/OpenAPI bindings through the generated CMake/Docker
   workflow, never by invoking `protoc` or runtime-specific generators manually.
 - Implement the adjacent `*_test.cpp` file with GoogleTest.
-- Keep the generated Boost.Asio/Beast/asio-grpc coroutine and executor
-  boundaries; blocking work belongs on its configured non-I/O task pool.
+- Keep the generated Boost.Asio/Beast and public gRPC callback integration
+  on the shared executor. Await collectors and other suspending operations;
+  blocking work belongs on its configured non-I/O task pool.
+- The epoll/uring build option changes only the I/O backend, not graph
+  semantics or the business-function coroutine API.
 - Makers return `boost::asio::awaitable` and are scheduled concurrently on the
   generated Asio executor. Do not use `std::async` or a private thread pool.
 - Do not modify `*_generated.hpp`, `*_generated.cpp`, generated protobuf, or

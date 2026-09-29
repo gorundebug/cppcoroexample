@@ -21,4 +21,4 @@ bash ./clone.generated.sh
 ./scripts/test.generated.sh docker-release
 ./scripts/integration-test.generated.sh docker-release
 
-echo "cppcoroexample clean-machine quickstart: PASS"
+echo "C++ Coro clean-machine quickstart: PASS"

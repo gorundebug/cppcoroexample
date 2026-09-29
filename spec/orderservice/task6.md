@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `http-source` |
 | File | `orderservice/internal/functions/endpoint/process_order_source.hpp` |
 | Test | `orderservice/internal/functions/endpoint/process_order_source_test.cpp` |
@@ -36,13 +36,14 @@ Calculate the total from processed item prices, falling back to the submitted to
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `orderservice/internal/functions/endpoint/process_order_source.hpp` and preserve its generated contract
 - [ ] Inspect input type `Order` in `orderservice/internal/types/order.hpp`
 - [ ] Inspect output type `OrderState` in `orderservice/internal/types/order_state.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `orderservice/internal/functions/endpoint/process_order_source_test.cpp`
 - [ ] Verify the endpoint/result lifecycle, including completion and error paths
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] orderservice/task6.md — ProcessOrderSource — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] orderservice/task6.md — ProcessOrderSource — C++/Coro — done`

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `custom-sink` |
 | File | `analyticsservice/internal/functions/endpoint/substream_analytics_result_sink.hpp` |
 | Test | `analyticsservice/internal/functions/endpoint/substream_analytics_result_sink_test.cpp` |
@@ -23,11 +23,12 @@ Validate and record the result returned by the service-local SubStream example.
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `analyticsservice/internal/functions/endpoint/substream_analytics_result_sink.hpp` and preserve its generated contract
 - [ ] Inspect input type `AnalyticsResult` in `analyticsservice/internal/types/analytics_result.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/endpoint/substream_analytics_result_sink_test.cpp`
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task26.md — SubstreamAnalyticsResultSink — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task26.md — SubstreamAnalyticsResultSink — C++/Coro — done`

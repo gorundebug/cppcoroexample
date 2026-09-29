@@ -14,14 +14,14 @@ namespace example::order_service::app {
 
 ServiceGenerated::ServiceGenerated(
     boost::asio::any_io_executor executor,
-    agrpc::GrpcContext& grpc_context,
+    boost::asio::io_context& io_context,
 
     std::shared_ptr<const config::Config> config,
     servicelib::log::Logger& logger,
     servicelib::metrics::Metrics& metrics,
     servicelib::tracing::Tracing* tracing)
     : executor_(std::move(executor)),
-      grpc_context_(&grpc_context),
+      io_context_(&io_context),
 
       config_(std::move(config)),
       logger_(&logger),
@@ -49,12 +49,13 @@ boost::asio::awaitable<void> ServiceGenerated::start() {
     const servicelib::Context context;
     servicelib::config::RuntimeConfigRegistry::Publish(runtime_config_);
     co_await serviceInit();
-    makers_.initMakers(executor_, grpc_context_);
+    makers_.initMakers(executor_, io_context_);
     co_await customMakersInit(context);
     co_await initRuntime(context);
     co_await servicelib::ServiceApp<ServiceGenerated, DataTypes>::start();
     lifecycle_started_ = true;
     servers_.http_server_->Start();
+    // Dedicated listeners are owned and started by their data sources.
     co_await serviceStarted();
   } catch (...) {
     startup_failure = std::current_exception();
@@ -226,8 +227,7 @@ void ServiceGenerated::releaseRuntime() noexcept {
   servicelib::config::RuntimeConfigRegistry::Publish({});
 }
 
-std::shared_ptr<
-    servicelib::datasource::http::IBeastEndpoint>
+std::shared_ptr<servicelib::datasource::http::IBeastEndpoint>
 ServiceGenerated::httpDataSourceEndpoint(int endpoint_id) const {
   if (auto endpoint = connectors_.order_service_api_source
           ? connectors_.order_service_api_source->endpoint(endpoint_id) : nullptr) {
@@ -236,7 +236,6 @@ ServiceGenerated::httpDataSourceEndpoint(int endpoint_id) const {
   throw std::invalid_argument(
       "HTTP datasource endpoint not found: " + std::to_string(endpoint_id));
 }
-
 
 
 servicelib::log::Logger& ServiceGenerated::getLogger() {

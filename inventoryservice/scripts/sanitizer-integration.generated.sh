@@ -9,7 +9,7 @@ case "$sanitizer" in
     export UBSAN_OPTIONS="halt_on_error=1"
     ;;
   tsan)
-    tsan_options="halt_on_error=1"
+    tsan_options="halt_on_error=1:suppressions=/workspace/source/scripts/tsan-suppressions.generated.txt"
     for symbolizer in llvm-symbolizer-18 llvm-symbolizer; do
       if command -v "$symbolizer" >/dev/null 2>&1; then
         tsan_options+=":external_symbolizer_path=$(command -v "$symbolizer")"
@@ -97,7 +97,7 @@ for port in os.environ["HTTP_PORTS"].split(","):
                 assert isinstance(graph["nodes"], list)
                 assert isinstance(graph["edges"], list)
                 assert graph["nodes"]
-print("generated Boost C++ sanitizer runtime gate: PASS")
+print("generated C++ sanitizer runtime gate: PASS")
 PY
 
 if [[ "${SANITIZER_HOLD:-0}" == "1" ]]; then

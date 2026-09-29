@@ -6,7 +6,7 @@ BUILD_DIR ?= build
 .PHONY: configure build test clean help
 
 configure: ## Configure this standalone C++ module
-	@cmake -S . -B "$(BUILD_DIR)" -G Ninja -DCMAKE_BUILD_TYPE=Debug
+	@cmake -S "." -B "$(BUILD_DIR)" -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
 build: configure ## [host] Build this standalone C++ module
 	@cmake --build "$(BUILD_DIR)" --parallel

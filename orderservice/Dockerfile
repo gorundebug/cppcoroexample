@@ -1,7 +1,7 @@
 ARG DEPENDENCY_DOCKER_REGISTRY=docker.io
 FROM servicelib-source AS servicelib-source
 FROM module-inventory_service_api AS module-inventory_service_api
-FROM module-model_cpp AS module-model_cpp
+FROM module-model_cppcoro AS module-model_cppcoro
 FROM module-order_service_api AS module-order_service_api
 
 FROM ${DEPENDENCY_DOCKER_REGISTRY}/library/ubuntu:24.04 AS development
@@ -34,16 +34,16 @@ COPY dependency-download-mirrors.env /etc/servicegen/dependency-download-mirrors
 COPY dependency-download-env.generated.sh /usr/local/bin/servicegen-download-env
 SHELL ["/usr/local/bin/servicegen-download-env", "/bin/sh", "-c"]
 
-COPY docker/cppboost-packages.txt /tmp/cppboost-packages.txt
+COPY docker/cppcoro-packages.txt /tmp/cppcoro-packages.txt
 RUN rm -f /etc/apt/apt.conf.d/docker-clean
 RUN --mount=type=cache,id=servicegen-apt-lists-${TARGETARCH},target=/var/lib/apt/lists,sharing=locked \
     --mount=type=cache,id=servicegen-apt-cache-${TARGETARCH},target=/var/cache/apt,sharing=locked \
     apt-get -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Acquire::Retries=2 update \
     && xargs apt-get -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Acquire::Retries=2 install --yes --no-install-recommends \
        ca-certificates locales python3-pip \
-       < /tmp/cppboost-packages.txt \
+       < /tmp/cppcoro-packages.txt \
     && locale-gen en_US.UTF-8 \
-    && rm -f /tmp/cppboost-packages.txt
+    && rm -f /tmp/cppcoro-packages.txt
 
 RUN python3 -m venv /opt/conan \
     && PIP_TRUSTED_HOST="$PIP_TRUSTED_HOST" \
@@ -63,15 +63,15 @@ RUN set -eu; \
     fi; \
     manifest="$source_dir/CMakeLists.txt"; \
     if [ ! -f "$manifest" ]; then manifest=$(find "$source_dir" -mindepth 2 -maxdepth 2 -type f -name CMakeLists.txt -print -quit); fi; \
-    if [ -z "$manifest" ]; then echo "cppboostservicelib source context has no CMakeLists.txt" >&2; exit 1; fi; \
+    if [ -z "$manifest" ]; then echo "cppcoroservicelib source context has no CMakeLists.txt" >&2; exit 1; fi; \
     source_dir=${manifest%/CMakeLists.txt}; \
-    if [ -z "$source_dir" ] || [ "$source_dir" = "/" ]; then echo "unsafe cppboostservicelib source directory" >&2; exit 1; fi; \
+    if [ -z "$source_dir" ] || [ "$source_dir" = "/" ]; then echo "unsafe cppcoroservicelib source directory" >&2; exit 1; fi; \
     mkdir -p /opt/servicelib; \
     cp -R "$source_dir/." /opt/servicelib/; \
     rm -rf /tmp/servicelib-source
 WORKDIR /workspace
 COPY --from=module-inventory_service_api / /workspace/modules/inventory_service_api
-COPY --from=module-model_cpp / /workspace/modules/model_cpp
+COPY --from=module-model_cppcoro / /workspace/modules/model_cppcoro
 COPY --from=module-order_service_api / /workspace/modules/order_service_api
 
 ENV LANG=en_US.UTF-8
@@ -89,7 +89,7 @@ FROM development AS debug-builder
 ARG CMAKE_BUILD_PARALLEL_LEVEL
 
 COPY . /workspace
-RUN --mount=type=cache,id=cppcoroexample-debug-build-${TARGETARCH},target=/workspace/build,sharing=locked \
+RUN --mount=type=cache,id=cppcoroexample-epoll-debug-build-${TARGETARCH},target=/workspace/build,sharing=locked \
     --mount=type=cache,id=cppcoroexample-debug-ccache-${TARGETARCH},target=/ccache \
     --mount=type=cache,id=servicegen-conan2-${TARGETARCH},target=/conan,sharing=locked \
     --mount=type=secret,id=dependency_conan_credential \
@@ -103,36 +103,36 @@ RUN --mount=type=cache,id=cppcoroexample-debug-build-${TARGETARCH},target=/works
     && ./scripts/run_with_progress.generated.sh "Debug build" cmake --build --preset docker-debug --parallel ${CMAKE_BUILD_PARALLEL_LEVEL:+"$CMAKE_BUILD_PARALLEL_LEVEL"}
 
 FROM debug-builder AS test-builder
-RUN --mount=type=cache,id=cppcoroexample-debug-build-${TARGETARCH},target=/workspace/build,sharing=locked \
+RUN --mount=type=cache,id=cppcoroexample-epoll-debug-build-${TARGETARCH},target=/workspace/build,sharing=locked \
     --mount=type=cache,id=servicegen-conan2-${TARGETARCH},target=/conan,sharing=locked \
     ./scripts/run_with_progress.generated.sh "Debug test" \
       ctest --test-dir /workspace/build --output-on-failure --no-tests=error
 
 FROM development AS runtime-builder
 ARG CMAKE_BUILD_PARALLEL_LEVEL
-ARG CPPBOOST_LTO=ON
+ARG CPPCORO_LTO=ON
 
-ARG CPPBOOSTSERVICELIB_PROFILING=OFF
-ARG CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS=OFF
+ARG CPPCOROSERVICELIB_PROFILING=OFF
+ARG CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS=OFF
 ARG RUNTIME_STRIP=ON
 ARG EXAMPLE_PROFILE=function-call
 COPY . /workspace
-RUN --mount=type=cache,id=cppcoroexample-runtime-build-${TARGETARCH}-${EXAMPLE_PROFILE},target=/workspace/build,sharing=locked \
+RUN --mount=type=cache,id=cppcoroexample-epoll-runtime-build-${TARGETARCH}-${EXAMPLE_PROFILE},target=/workspace/build,sharing=locked \
     --mount=type=cache,id=cppcoroexample-runtime-ccache-${TARGETARCH},target=/ccache \
     --mount=type=cache,id=servicegen-conan2-${TARGETARCH},target=/conan,sharing=locked \
     --mount=type=secret,id=dependency_conan_credential \
-    CPPBOOSTSERVICELIB_BUILD_TESTS=False \
+    CPPCOROSERVICELIB_BUILD_TESTS=False \
       ./scripts/run_with_progress.generated.sh "Conan Release install" \
       ./scripts/conan-install.generated.sh Release /workspace/build/conan-release \
     && conan_toolchain="$(cat /workspace/build/conan-release/toolchain.path)" \
     && CCACHE_DIR=/ccache ./scripts/run_with_progress.generated.sh "Release configure" cmake --preset docker-release \
       --fresh \
       -DCMAKE_TOOLCHAIN_FILE="${conan_toolchain}" \
-      -DCMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE="${CPPBOOST_LTO}" \
+      -DCMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE="${CPPCORO_LTO}" \
       -DBUILD_TESTING=OFF \
       -DFETCH_CPP_DEPENDENCIES=OFF \
-      -DCPPBOOSTSERVICELIB_PROFILING="${CPPBOOSTSERVICELIB_PROFILING}" \
-      -DCPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS="${CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS}" \
+      -DCPPCOROSERVICELIB_PROFILING="${CPPCOROSERVICELIB_PROFILING}" \
+      -DCPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS="${CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS}" \
     && ./scripts/run_with_progress.generated.sh "Release build" cmake --build --preset docker-release \
       --target example_order_service --parallel ${CMAKE_BUILD_PARALLEL_LEVEL:+"$CMAKE_BUILD_PARALLEL_LEVEL"} \
     && mkdir -p /opt/service-bin /opt/runtime-libs \
@@ -150,8 +150,8 @@ RUN --mount=type=cache,id=cppcoroexample-runtime-build-${TARGETARCH}-${EXAMPLE_P
 
 FROM ${DEPENDENCY_DOCKER_REGISTRY}/library/ubuntu:24.04 AS runtime-base
 
-ARG CPPBOOSTSERVICELIB_PROFILING=OFF
-ARG CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS=OFF
+ARG CPPCOROSERVICELIB_PROFILING=OFF
+ARG CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS=OFF
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEPENDENCY_APT_UBUNTU_ARCHIVE_URL=
 ARG DEPENDENCY_APT_UBUNTU_SECURITY_URL=
@@ -171,8 +171,8 @@ RUN apt-get -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Acquir
     && rm -rf /var/lib/apt/lists/*
 ENV LD_LIBRARY_PATH=/usr/local/lib/servicegen
 LABEL org.gorundebug.build-type="Release" \
-      org.gorundebug.cppboostservicelib.profiling="${CPPBOOSTSERVICELIB_PROFILING}" \
-      org.gorundebug.cppboostservicelib.coroutine-diagnostics="${CPPBOOSTSERVICELIB_COROUTINE_DIAGNOSTICS}"
+      org.gorundebug.cppcoroservicelib.profiling="${CPPCOROSERVICELIB_PROFILING}" \
+      org.gorundebug.cppcoroservicelib.coroutine-diagnostics="${CPPCOROSERVICELIB_COROUTINE_DIAGNOSTICS}"
 WORKDIR /app
 
 FROM runtime-base AS runtime-orderservice

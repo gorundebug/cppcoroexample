@@ -22,5 +22,5 @@ services:
 
 volumes:
   cpp-dev-cmake-build:
-    name: cppcoroexample_inventoryservice_cpp-cmake-build
+    name: cppcoroexample_inventoryservice_cpp-cmake-build-epoll
     external: true

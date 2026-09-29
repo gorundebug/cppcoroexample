@@ -200,7 +200,7 @@ inline Config MakeConfig() {
     GrpcDataConnectorConfig value{};
     value.id = kInventoryServiceApiConnectorId;
     value.name = "Inventory Service API";
-    value.implementation = DataConnectorImplementation::kAsioGRPC;
+    value.implementation = DataConnectorImplementation::kGoogleGRPC;
     value.module = "inventory_service_api";
     value.address = "dns:///localhost:9202";
     value.connectionsCount = 1;
@@ -230,14 +230,14 @@ inline Config MakeConfig() {
     LinkConfig value{};
     value.from = kGetInventoryItemDataStreamId;
     value.to = kMergeInventoryResultStreamId;
-    value.callSemantics = MakeCallSemanticsGroup(CallSemantics::kFunctionCall, "", 0, false);
+    value.callSemantics = MakeCallSemanticsGroup(CallSemantics::kParallelCall, "", 0, false);
     return value;
   }();
   cfg.links.processInventoryItemToGetInventoryItemData = [] {
     LinkConfig value{};
     value.from = kProcessInventoryItemStreamId;
     value.to = kGetInventoryItemDataStreamId;
-    value.callSemantics = MakeCallSemanticsGroup(CallSemantics::kFunctionCall, "Inventory Priority Workers", 10, false);
+    value.callSemantics = MakeCallSemanticsGroup(CallSemantics::kPriorityTaskPool, "Inventory Priority Workers", 10, false);
     return value;
   }();
   cfg.modules.inventoryServiceApi = [] {

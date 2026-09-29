@@ -9,7 +9,7 @@
 
 namespace example::order_service::app {
 
-void ServiceMakers::initMakers(boost::asio::any_io_executor executor, agrpc::GrpcContext* grpc_context) {
+void ServiceMakers::initMakers(boost::asio::any_io_executor executor, [[maybe_unused]] boost::asio::io_context* io_context) {
   auto& makers_ = *this;
   makers_.map_order_item_result_to_order_state = [](servicelib::Context context, servicelib::IServiceEnvironment& environment) {
     return functions::MakeMapOrderItemResultToOrderState(std::move(context), environment);
@@ -64,11 +64,11 @@ void ServiceMakers::initMakers(boost::asio::any_io_executor executor, agrpc::Grp
         executor, std::move(router), std::move(options));
   };
 
-  makers_.inventory_service_api_client = [grpc_context](
+  makers_.inventory_service_api_client = [io_context](
       servicelib::Context context, servicelib::IServiceEnvironment& environment,
       const servicelib::config::GrpcDataConnectorConfig& config)
       -> boost::asio::awaitable<std::unique_ptr<
-          servicelib::grpc_transport::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>>> {
+          servicelib::grpc_transport::callback::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>>> {
     (void)context;
     (void)environment;
     if (config.connectionsCount < 1) {
@@ -77,8 +77,8 @@ void ServiceMakers::initMakers(boost::asio::any_io_executor executor, agrpc::Grp
           " connectionsCount must be at least 1");
     }
     co_return std::make_unique<
-        servicelib::grpc_transport::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>>(
-        *grpc_context, config.address,
+        servicelib::grpc_transport::callback::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>>(
+        *io_context, config.address,
         static_cast<std::size_t>(config.connectionsCount),
         [] (std::shared_ptr<::grpc::Channel> channel) {
           return ::inventoryserviceapi::InventoryServiceApi::NewStub(std::move(channel));

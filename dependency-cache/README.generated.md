@@ -1,0 +1,132 @@
+# Local dependency proxy
+
+The optional shared Nexus instance caches artifacts downloaded
+from public Go, npm, PyPI, Cargo, Helm, Maven Central, APT and OCI registries,
+plus immutable GitHub/GitLab archives and release assets used by generated
+builds.
+The companion persistent Git mirror caches smart-HTTP clones used by CPM and
+other Git-based fetchers, which a package proxy cannot cache. Nexus also keeps
+Conan binary packages built locally for package IDs absent from ConanCenter;
+ordinary application compilation remains in BuildKit/CMake/ccache.
+
+```bash
+# Configure one global data directory in your shell:
+export DEPENDENCY_PROXY_DIR="$HOME/.servicegen/dependency-proxy"
+
+# First start only, after reading the EULA:
+make DEPENDENCY_PROXY_ACCEPT_EULA=true dependency-cache-up
+
+# Later starts; the container remains running between project builds:
+make dependency-cache-up
+
+# Force every existing bare Git mirror to fetch current refs now:
+make dependency-cache-refresh
+
+# Host package managers:
+eval "$(make -s dependency-cache-env)"
+make build
+
+# Or build Docker images through the proxy:
+make dependency-cache-docker-build
+```
+
+The first command is required once for a new cache directory after reading the
+[Nexus Community Edition EULA](https://links.sonatype.com/products/nxrm/ce-eula).
+Later starts do not need the flag.
+
+Downloaded artifacts are stored under
+`$DEPENDENCY_PROXY_DIR/nexus`; bare Git mirrors are stored under
+`$DEPENDENCY_PROXY_DIR/git-mirror`. When this variable is present,
+generated Make targets automatically route all
+supported host and Docker package downloads through that Nexus instance. The
+container has `restart: unless-stopped`; ordinary `docker-down` commands do not
+stop it. Use `dependency-cache-down` explicitly when it should stop, and
+`dependency-cache-clean` to remove its data. Without the variable the proxy is
+disabled, `dependency-cache-up` refuses to start, and builds use their normal
+upstreams.
+
+Host package managers use `localhost`. Container builds use the stable
+`host.docker.internal` name. Docker Desktop supplies it natively; generated
+Docker/Compose commands add the `host-gateway` mapping required by Docker
+Engine on Linux. On Linux the proxy launcher therefore binds the published
+ports to the host bridge (`0.0.0.0` by default); use the host firewall or set
+`DEPENDENCY_PROXY_BIND_HOST` explicitly when tighter exposure is required.
+
+Docker Hub image proxying is exposed on port 18083. The same generated catalog
+also exposes separate Nexus proxies for `ghcr.io` (18085), `quay.io` (18086)
+and `docker.redpanda.com` (18087), plus `registry.k8s.io` (18088). Separate repositories avoid collisions
+between identical image paths owned by different registries. When proxy mode is enabled,
+generated service builds pass `DEPENDENCY_DOCKER_REGISTRY` to every language's
+Dockerfile, so base images are resolved through Nexus without changing Docker
+Desktop/Engine daemon settings. The generated Docker command wrapper applies
+the same catalog to plain `docker run`: it forbids Docker's direct pull, pulls
+a missing image through the matching Nexus registry, tags it locally and then
+starts the requested container. An unknown external registry fails explicitly
+in proxy mode instead of falling back to the Internet. The generated local k3s configuration mirrors
+every registry in this catalog and disables containerd's direct default-registry
+fallback, so a proxy error is retried instead of silently using the Internet.
+Without proxy mode normal registry endpoints are used directly. Pinned C++ sources use immutable archives through host-specific raw
+proxies to populate their separate versioned source cache. A Conan hook rejects
+a previously unknown source host in proxy mode, so a dependency update cannot
+silently bypass Nexus. Generated Debian/Ubuntu build stages rewrite their APT sources to Nexus
+when proxy mode is enabled. Once any of these layers contains an artifact, a
+build does not fetch it from the public upstream again.
+
+GitHub and GitLab HTTPS clone URLs are rewritten process-locally to the mirror;
+the user's global Git configuration is never modified. A repository is cloned
+from upstream once. Existing mirrors are always served immediately and ordinary
+builds never wait for an upstream refresh. Run `make dependency-cache-refresh`
+explicitly to fetch and prune every existing mirror before consuming newly
+published commits or tags.
+
+Ordinary dependencies are added through the language's native manifest and
+need no proxy configuration. If a package runs its own downloader and bypasses
+that registry, add its documented mirror environment variable to the
+user-owned `dependency-download-mirrors.env` file. Use
+`${DEPENDENCY_GITHUB_RAW_URL}/owner/repository/...` as the URL prefix; the same
+entry is expanded to the host or Docker-reachable Nexus address automatically.
+Framework-owned defaults are generated from the single `downloadMirrors`
+catalog in `servicegen/internal/codegenerator/dependencies.yaml`. New OCI
+registries used by generated Kubernetes infrastructure belong in that file's
+`containerRegistryProxies` catalog; Nexus provisioning, published ports and
+k3s mirrors are then generated together.
+
+## Conan binary packages
+
+The generated Nexus bootstrap creates three Conan repositories:
+
+- `conan-proxy` caches ConanCenter;
+- `conan-hosted` stores binary packages built locally;
+- `conan-group` remains available for tools that support a combined endpoint.
+
+Generated builds configure `conan-hosted` as the authenticated upload remote
+and `conan-proxy` as the read remote. This avoids relying on repository-manager
+group search when resolving newly added Conan packages, while all external
+downloads still pass through Nexus.
+
+Proxy mode enables publication through a dedicated local account that can
+write only to `conan-hosted`. Credentials are kept in
+`$DEPENDENCY_PROXY_DIR/conan.publisher.credential` and are passed to Docker
+builds as a BuildKit secret; they are not embedded in an image or build
+argument. Conan's graph package list ensures that only packages built from
+source by the current install are uploaded, not packages downloaded from
+ConanCenter.
+
+For a trusted CI pipeline, leave developer builds read-only and configure the
+same contract only in CI: set `DEPENDENCY_CONAN_PUBLISH=1`, provide
+`DEPENDENCY_CONAN_UPLOAD_URL`, and expose a two-line username/password file as
+`DEPENDENCY_CONAN_CREDENTIAL_FILE`. Without the publish flag, the upload remote
+and secret are unused.
+
+## Changing C++ dependency versions
+
+After changing a pinned C++ dependency version or its acquisition logic, run:
+
+```bash
+make dependency-source-cache-invalidate
+```
+
+The command removes the project's prepared C++ source cache and its CMake build
+volumes. It deliberately preserves compiler `ccache` data and the Nexus proxy.
+The next build reconstructs the complete dependency tree; immutable archives
+already downloaded by Nexus are reused.

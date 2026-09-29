@@ -1,11 +1,4 @@
-# C++20 coroutine example
-
-Canonical service graph using [cppcoroservicelib](https://github.com/gorundebug/cppcoroservicelib).
-The runtime is pinned to `v0.2.148`; local development can override
-`SERVICELIB_SOURCE_CONTEXT`. Business handlers and graph calls use C++20
-`co_await`. This repository contains the adapted source; do not overwrite it
-with output from the synchronous Boost generator.
-
+# Example
 
 Generated ServiceLib project. The root is a development workspace and an
 orchestration layer; every service directory owns its build, Docker and
@@ -240,7 +233,7 @@ make golang-race-down  # [Docker] validate race logs/exits and stop the stack
 
 
 
-### C++ / Boost
+### C++ / Coro
 
 ```sh
 make cpp-build           # [Docker] Debug build
@@ -255,6 +248,12 @@ make cpp-workspace-build # [Docker]
 make cpp-workspace-test  # [Docker]
 make cpp-package         # [host] package standalone service directories
 ```
+
+The I/O backend is selected at generation/build time with
+`CPP_CORO_IO_BACKEND=epoll|uring` (default `epoll`), independently of the
+static/dynamic graph selection. Changing backend requires a matching runtime
+build; it never changes the business-function coroutine API. `uring` also
+requires a compatible Linux kernel and a container policy permitting io_uring.
 
 Sanitizer builds use `RelWithDebInfo` (`-O2`, debug symbols, no stripping) for
 service/host libraries and the regular `Release` profile for Conan build tools.

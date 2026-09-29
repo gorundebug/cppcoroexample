@@ -4,7 +4,7 @@
 
 | Field | Value |
 |-------|-------|
-| Language | `C++/Boost` |
+| Language | `C++/Coro` |
 | Kind | `map` |
 | File | `inventoryservice/internal/functions/inventory_item/get_inventory_item_error.hpp` |
 | Test | `inventoryservice/internal/functions/inventory_item/get_inventory_item_error_test.cpp` |
@@ -22,16 +22,17 @@ Preserve the order and item identity and requested quantity, and record the fail
 
 ## Stream types
 - Input: `InventoryFailure` — `inventoryservice/internal/types/inventory_failure.hpp`
-- Output: `OrderItemResult` — `model_cpp/include/example/model/types/order_item_result.hpp`
+- Output: `OrderItemResult` — `model_cppcoro/include/example/model/types/order_item_result.hpp`
 
 ## Checklist
 
-- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Boost` section
+- [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `inventoryservice/internal/functions/inventory_item/get_inventory_item_error.hpp` and preserve its generated contract
 - [ ] Inspect input type `InventoryFailure` in `inventoryservice/internal/types/inventory_failure.hpp`
-- [ ] Inspect output type `OrderItemResult` in `model_cpp/include/example/model/types/order_item_result.hpp`
-- [ ] Implement the C++ function object without retaining borrowed payload/context references
+- [ ] Inspect output type `OrderItemResult` in `model_cppcoro/include/example/model/types/order_item_result.hpp`
+- [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
+- [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
 - [ ] Implement meaningful assertions in `inventoryservice/internal/functions/inventory_item/get_inventory_item_error_test.cpp`
 - [ ] Re-read this checklist
-- [ ] Append to `spec/progress.md`: `- [x] inventoryservice/task2.md — GetInventoryItemError — C++/Boost — done`
+- [ ] Append to `spec/progress.md`: `- [x] inventoryservice/task2.md — GetInventoryItemError — C++/Coro — done`

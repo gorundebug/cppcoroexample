@@ -28,56 +28,31 @@ void ServiceEndpoints::initDataSinks(ServiceGenerated& service, const config::Co
       std::make_shared<WriteCycleAnalyticsCustomSinkEndpoint>(
           streams_.write_cycle_analytics.get(),
           *functions_.cycle_analytics_result_sink);
-  bindings_.write_cycle_analytics.consume =
-      [endpoint = endpoints_.write_cycle_analytics.get()](
-          servicelib::MessageContext context, const example::analytics_service::types::AnalyticsEvent& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::analytics_service::types::AnalyticsEvent>::make(value));
-      };
+  bindings_.write_cycle_analytics.endpoint = endpoints_.write_cycle_analytics.get();
   service.registerDataSink(endpoints_.write_cycle_analytics);
   endpoints_.write_joined_analytics =
       std::make_shared<WriteJoinedAnalyticsCustomSinkEndpoint>(
           streams_.write_joined_analytics.get(),
           *functions_.joined_analytics_sink);
-  bindings_.write_joined_analytics.consume =
-      [endpoint = endpoints_.write_joined_analytics.get()](
-          servicelib::MessageContext context, const example::analytics_service::types::AnalyticsResult& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
-      };
+  bindings_.write_joined_analytics.endpoint = endpoints_.write_joined_analytics.get();
   service.registerDataSink(endpoints_.write_joined_analytics);
   endpoints_.write_high_value_analytics =
       std::make_shared<WriteHighValueAnalyticsCustomSinkEndpoint>(
           streams_.write_high_value_analytics.get(),
           *functions_.high_value_analytics_sink);
-  bindings_.write_high_value_analytics.consume =
-      [endpoint = endpoints_.write_high_value_analytics.get()](
-          servicelib::MessageContext context, const example::analytics_service::types::AnalyticsResult& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
-      };
+  bindings_.write_high_value_analytics.endpoint = endpoints_.write_high_value_analytics.get();
   service.registerDataSink(endpoints_.write_high_value_analytics);
   endpoints_.write_standard_analytics =
       std::make_shared<WriteStandardAnalyticsCustomSinkEndpoint>(
           streams_.write_standard_analytics.get(),
           *functions_.standard_analytics_sink);
-  bindings_.write_standard_analytics.consume =
-      [endpoint = endpoints_.write_standard_analytics.get()](
-          servicelib::MessageContext context, const example::analytics_service::types::AnalyticsResult& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
-      };
+  bindings_.write_standard_analytics.endpoint = endpoints_.write_standard_analytics.get();
   service.registerDataSink(endpoints_.write_standard_analytics);
   endpoints_.write_substream_analytics =
       std::make_shared<WriteSubstreamAnalyticsCustomSinkEndpoint>(
           streams_.write_substream_analytics.get(),
           *functions_.substream_analytics_result_sink);
-  bindings_.write_substream_analytics.consume =
-      [endpoint = endpoints_.write_substream_analytics.get()](
-          servicelib::MessageContext context, const example::analytics_service::types::AnalyticsResult& value) {
-        return endpoint->consume(std::move(context),
-                          servicelib::Payload<example::analytics_service::types::AnalyticsResult>::make(value));
-      };
+  bindings_.write_substream_analytics.endpoint = endpoints_.write_substream_analytics.get();
   service.registerDataSink(endpoints_.write_substream_analytics);
 }
 

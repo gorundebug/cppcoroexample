@@ -517,7 +517,7 @@ services:
                     source: invokeAnalyticsSubstream
                     type: Sink
                     valueType: analyticsResult
-        programmingLanguage: CppBoost
+        programmingLanguage: CppCoro
         readinessHandler: health/ready
         shutdownTimeout: 30000
         startupHandler: health/startup

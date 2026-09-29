@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include <functional>
 #include <exception>
 #include <future>
 #include <mutex>
@@ -17,7 +16,7 @@
 
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
-#include <agrpc/grpc_context.hpp>
+#include <boost/asio/io_context.hpp>
 
 
 #include "inventoryservice/config/config.generated.hpp"
@@ -42,6 +41,12 @@
 namespace example::inventory_service::app {
 
 class ServiceGenerated;
+
+
+
+
+
+
 
 
   struct ServiceBindings final {

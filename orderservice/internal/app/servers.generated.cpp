@@ -10,7 +10,7 @@
 namespace example::order_service::app {
 
 boost::asio::awaitable<void> ServiceServers::initInfrastructure(
-    ServiceGenerated& service, servicelib::Context context, const config::Config& cfg,
+    ServiceGenerated& service, servicelib::Context context, [[maybe_unused]] const config::Config& cfg,
     const servicelib::config::ServiceConfig& service_config) {
   auto& makers_ = service.makers_;
   auto& servers_ = *this;

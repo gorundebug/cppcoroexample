@@ -11,13 +11,13 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(_servicelib_source_dir_default "$ENV{SERVICELIB_SOURCE_DIR}")
   endif()
   set(SERVICELIB_SOURCE_DIR "${_servicelib_source_dir_default}" CACHE PATH
-      "Path to a cppboostservicelib source checkout")
+      "Path to a cppcoroservicelib source checkout")
   unset(_servicelib_source_dir_default)
-  set(CPPBOOSTSERVICELIB_DEPENDENCY_MODE "CONAN" CACHE STRING "" FORCE)
-  set(CPPBOOSTSERVICELIB_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(CPPCOROSERVICELIB_DEPENDENCY_MODE "CONAN" CACHE STRING "" FORCE)
+  set(CPPCOROSERVICELIB_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   if(SERVICELIB_SOURCE_DIR)
     add_subdirectory("${SERVICELIB_SOURCE_DIR}"
-        "${CMAKE_BINARY_DIR}/_deps/cppboostservicelib-build" EXCLUDE_FROM_ALL)
+        "${CMAKE_BINARY_DIR}/_deps/cppcoroservicelib-build" EXCLUDE_FROM_ALL)
   else()
     include(FetchContent)
     FetchContent_Declare(servicegen_servicelib
@@ -35,4 +35,4 @@ target_link_libraries(example_order_service_api INTERFACE servicelib::servicelib
 target_include_directories(example_order_service_api INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_sources(example_order_service_api INTERFACE
-    "${CMAKE_CURRENT_SOURCE_DIR}/openapi/orderserviceapi/orderserviceapi.cpp.generated.yaml")
+    "${CMAKE_CURRENT_SOURCE_DIR}/../openapi/orderserviceapi/orderserviceapi.cpp.generated.yaml")

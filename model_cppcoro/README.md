@@ -1,6 +1,6 @@
 # model
 
-Standalone generated Boost C++ contract/model module.
+Standalone generated C++ contract/model module.
 
 ```bash
 make build # [host] configure and build this module with CMake
