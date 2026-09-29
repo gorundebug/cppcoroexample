@@ -34,8 +34,8 @@ services:
         DEPENDENCY_APT_UBUNTU_SECURITY_URL: ${DEPENDENCY_APT_UBUNTU_SECURITY_URL:-}
         DEPENDENCY_APT_UBUNTU_PORTS_URL: ${DEPENDENCY_APT_UBUNTU_PORTS_URL:-}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.150}
-        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.150}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.151}
+        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.151}
       secrets:
         - dependency_conan_credential
     extra_hosts:
@@ -98,8 +98,8 @@ services:
         CPPCORO_LTO: ${CPPCORO_LTO:-ON}
         EXAMPLE_PROFILE: ${EXAMPLE_PROFILE:-function-call}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.150}
-        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.150}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.151}
+        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.151}
       secrets:
         - dependency_conan_credential
 

@@ -111,6 +111,8 @@ start_service() {
     container="${SANITIZER_CONTAINER_NAME:-cppcoroexample-inventoryservice-$sanitizer}"
     docker network inspect "$network" >/dev/null 2>&1 || docker network create "$network" >/dev/null
     docker rm -f "$container" >/dev/null 2>&1 || true
+    build_volume="$(docker compose -f docker-compose.cmake.generated.yml config --format json |
+      python3 -c 'import json,sys; print(json.load(sys.stdin)["volumes"]["cpp-cmake-build"]["name"])')"
     port_args=()
     port_args+=(-p "${SANITIZER_HOST_HTTP_PORT:-9092}:9092")
     port_args+=(-p "${SANITIZER_HOST_GRPC_PORT:-9202}:9202")
@@ -119,7 +121,7 @@ start_service() {
       --network "$network" \
       --network-alias "inventoryservice" \
       "${port_args[@]}" \
-      -v "cppcoroexample_inventoryservice_cpp-cmake-build:/workspace/build" \
+      -v "$build_volume:/workspace/build" \
       -w /workspace/source \
       -e SANITIZER_HOLD=1 \
       "inventoryservice-cpp-build:local" \
