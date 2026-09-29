@@ -34,7 +34,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
          "Fetch pinned cppcoroservicelib and missing contract modules" ON)
   set(CPPCOROSERVICELIB_REPOSITORY "https://github.com/gorundebug/cppcoroservicelib.git" CACHE STRING
       "Standalone cppcoroservicelib repository")
-  set(CPPCOROSERVICELIB_REVISION "v0.2.148" CACHE STRING
+  set(CPPCOROSERVICELIB_REVISION "v0.2.149" CACHE STRING
       "Pinned cppcoroservicelib revision")
   set(CPPCOROSERVICELIB_ENABLE_GRPC ON
       CACHE BOOL "Build asio-grpc support" FORCE)
@@ -89,7 +89,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
       include(FetchContent)
       FetchContent_Declare(servicegen_module_inventory_service_api
           GIT_REPOSITORY "https://github.com/gorundebug/cppcoroexample.git"
-          GIT_TAG "v0.2.148"
+          GIT_TAG "v0.2.149"
           SOURCE_SUBDIR "inventory_service_api/cppcoro"
           GIT_SHALLOW FALSE
           GIT_PROGRESS TRUE)
@@ -107,7 +107,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
       include(FetchContent)
       FetchContent_Declare(servicegen_module_model
           GIT_REPOSITORY "https://github.com/gorundebug/cppcoroexample.git"
-          GIT_TAG "v0.2.148"
+          GIT_TAG "v0.2.149"
           SOURCE_SUBDIR "model_cppcoro/"
           GIT_SHALLOW FALSE
           GIT_PROGRESS TRUE)

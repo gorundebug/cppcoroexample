@@ -32,7 +32,7 @@ set(CPPCOROSERVICELIB_REPOSITORY
     "https://github.com/gorundebug/cppcoroservicelib.git" CACHE STRING
     "Standalone cppcoroservicelib repository")
 set(CPPCOROSERVICELIB_REVISION
-    "v0.2.148" CACHE STRING
+    "v0.2.149" CACHE STRING
     "Pinned cppcoroservicelib revision")
 set(CPPCOROSERVICELIB_DEPENDENCY_MODE "CONAN" CACHE STRING
     "Dependency provider used for a source-tree cppcoroservicelib build")
