@@ -4,6 +4,7 @@
 #include <string>
 
 #include <servicelib/runtime/serde/serde.hpp>
+
 #include <analyticsservice/internal/types/analytics_event.hpp>
 
 namespace example::analytics_service::types::serde {

@@ -2,7 +2,6 @@
 #pragma once
 
 #include <memory>
-
 #include <functional>
 #include <exception>
 #include <future>
@@ -18,26 +17,23 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/io_context.hpp>
+#include <proto/inventoryserviceapi/inventoryserviceapi.generated.grpc.pb.h>
+#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
 
-
-#include "inventoryservice/config/config.generated.hpp"
-#include "inventoryservice/internal/serdes/serde_registration.generated.hpp"
 #include <servicelib/runtime/config/config.hpp>
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
 #include <servicelib/datasource/grpc/asio.hpp>
 #include <servicelib/datasource/http/beast.hpp>
 
+#include "inventoryservice/config/config.generated.hpp"
+#include "inventoryservice/internal/serdes/serde_registration.generated.hpp"
 #include <example/model/types/order_item.hpp>
 #include <example/model/types/order_item_result.hpp>
 #include <inventoryservice/internal/functions/endpoint/process_order_item_source.hpp>
 #include <inventoryservice/internal/functions/inventory_item/get_inventory_item_data.hpp>
 #include <inventoryservice/internal/functions/inventory_item/get_inventory_item_error.hpp>
 #include <inventoryservice/internal/types/inventory_failure.hpp>
-#include <proto/inventoryserviceapi/inventoryserviceapi.generated.grpc.pb.h>
-#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
-
-
 #include "inventoryservice/internal/app/streams.generated.hpp"
 
 namespace example::inventory_service::app {

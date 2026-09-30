@@ -2,11 +2,13 @@
 #pragma once
 #include <atomic>
 #include <memory>
+
 #include <boost/asio/any_io_executor.hpp>
 #include <grpcpp/server_builder.h>
+#include <proto/inventoryserviceapi/inventoryserviceapi.generated.grpc.pb.h>
+
 #include <servicelib/runtime/detail/grpc_callback_server.hpp>
 #include <servicelib/runtime/detail/grpc_source_handlers.hpp>
-#include <proto/inventoryserviceapi/inventoryserviceapi.generated.grpc.pb.h>
 
 #include "inventoryservice/internal/app/service.hpp"
 namespace example::inventory_service::app {

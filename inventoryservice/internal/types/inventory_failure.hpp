@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+
 #include <example/model/types/order_item.hpp>
 
 namespace example::inventory_service::types {

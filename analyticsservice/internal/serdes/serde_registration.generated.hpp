@@ -5,6 +5,7 @@
 
 #include <servicelib/runtime/serde/serde.hpp>
 #include <servicelib/runtime/serde/serdeimpl.hpp>
+
 #include <analyticsservice/internal/serdes/analytics_event_serde.hpp>
 #include <analyticsservice/internal/serdes/analytics_result_serde.hpp>
 #include <example/model/serdes/order_processed_serde.hpp>

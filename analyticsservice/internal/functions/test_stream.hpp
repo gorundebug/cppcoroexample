@@ -1,14 +1,16 @@
 #pragma once
 
+#include <utility>
+#include <vector>
+
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/use_future.hpp>
+
 #include <servicelib/runtime/base.hpp>
 #include <servicelib/runtime/context.hpp>
-#include <utility>
-#include <vector>
 
 namespace example::analytics_service::functions::test {
 

@@ -2,9 +2,11 @@
 
 #include <stdexcept>
 #include <string>
+
 #include <boost/json.hpp>
 
 #include <servicelib/runtime/serde/serde.hpp>
+
 #include <analyticsservice/internal/types/analytics_key.hpp>
 
 namespace example::analytics_service::types::serde {

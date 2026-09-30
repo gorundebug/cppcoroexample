@@ -1,15 +1,16 @@
-#include "analyticsservice/internal/app/bindings.generated.hpp"
-#include "analyticsservice/internal/app/substreams.generated.hpp"
+#include <chrono>
+#include <future>
+#include <memory>
 
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/use_future.hpp>
-#include <servicelib/runtime/detail/sync.hpp>
 #include <gtest/gtest.h>
 
-#include <chrono>
-#include <future>
-#include <memory>
+#include <servicelib/runtime/detail/sync.hpp>
+
+#include "analyticsservice/internal/app/bindings.generated.hpp"
+#include "analyticsservice/internal/app/substreams.generated.hpp"
 
 namespace example::analytics_service::app {
 namespace {

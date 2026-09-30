@@ -1,20 +1,20 @@
 #pragma once
 
 #include <memory>
-
-#include <boost/asio/awaitable.hpp>
-
 #include <exception>
-#include <boost/json.hpp>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <variant>
 
+#include <boost/asio/awaitable.hpp>
+#include <boost/json.hpp>
+
 #include <servicelib/runtime/common.hpp>
 #include <servicelib/runtime/config/endpoint_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
 #include <servicelib/datasource/kafka/librdkafka.hpp>
+
 #include <example/model/types/order_processed.hpp>
 
 

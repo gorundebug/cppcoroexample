@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 
-#include <orderservice/internal/functions/order/soft_deadline.hpp>
 #include <servicelib/runtime/testlog/testlog.hpp>
 #include <servicelib/runtime/testmetrics/testmetrics.hpp>
+
+#include <orderservice/internal/functions/order/soft_deadline.hpp>
 
 namespace {
 

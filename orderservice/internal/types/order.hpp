@@ -1,9 +1,9 @@
 #pragma once
 
-#include <boost/json.hpp>
-
 #include <string>
 #include <vector>
+
+#include <boost/json.hpp>
 
 #include <example/model/types/order_item.hpp>
 

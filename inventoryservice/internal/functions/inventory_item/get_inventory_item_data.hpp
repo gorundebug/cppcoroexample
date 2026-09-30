@@ -4,17 +4,18 @@
 #include <chrono>
 #include <cstddef>
 #include <memory>
-
-#include <boost/asio/awaitable.hpp>
-#include <inventoryservice/internal/types/inventory_failure.hpp>
 #include <tuple>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
+#include <boost/asio/awaitable.hpp>
+
 #include <servicelib/runtime/context.hpp>
 #include <servicelib/runtime/config/stream_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
+
+#include <inventoryservice/internal/types/inventory_failure.hpp>
 #include <example/model/types/order_item.hpp>
 #include <example/model/types/order_item_result.hpp>
 

@@ -13,6 +13,7 @@
 #include <servicelib/runtime/config/endpoint_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
 #include <servicelib/datasource/localsource/custom.hpp>
+
 #include <analyticsservice/internal/types/analytics_event.hpp>
 
 

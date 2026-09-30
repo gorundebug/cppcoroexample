@@ -1,7 +1,5 @@
 #pragma once
 
-#include <boost/json.hpp>
-
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -9,8 +7,6 @@
 #include <exception>
 #include <iomanip>
 #include <memory>
-
-#include <boost/asio/awaitable.hpp>
 #include <mutex>
 #include <optional>
 #include <sstream>
@@ -21,12 +17,16 @@
 #include <utility>
 #include <vector>
 
+#include <boost/json.hpp>
+#include <boost/asio/awaitable.hpp>
+#include <handlers/order_service_api/processorder/requests.hpp>
+#include <handlers/order_service_api/processorder/responses.hpp>
+
 #include <servicelib/datasource/http/beast.hpp>
 #include <servicelib/runtime/common.hpp>
 #include <servicelib/runtime/config/endpoint_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
-#include <handlers/order_service_api/processorder/requests.hpp>
-#include <handlers/order_service_api/processorder/responses.hpp>
+
 #include <example/model/types/order_item.hpp>
 #include <example/model/types/order_item_result.hpp>
 #include <orderservice/internal/types/order.hpp>

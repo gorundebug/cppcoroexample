@@ -3,9 +3,6 @@
 #include <algorithm>
 #include <memory>
 #include <optional>
-
-#include <boost/asio/awaitable.hpp>
-
 #include <chrono>
 #include <cstddef>
 #include <stdexcept>
@@ -13,10 +10,13 @@
 #include <utility>
 #include <vector>
 
+#include <boost/asio/awaitable.hpp>
+
 #include <servicelib/runtime/base.hpp>
 #include <servicelib/runtime/context.hpp>
 #include <servicelib/runtime/config/stream_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
+
 #include <orderservice/internal/types/order.hpp>
 
 

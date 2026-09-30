@@ -1,12 +1,12 @@
 #pragma once
 
-#include <boost/json.hpp>
-
 #include <cstddef>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <boost/json.hpp>
 
 namespace example::analytics_service::types {
 

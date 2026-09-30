@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <atomic>
-
 #include <functional>
 #include <exception>
 #include <future>
@@ -19,9 +18,6 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
 
-
-#include "analyticsservice/config/config.generated.hpp"
-#include "analyticsservice/internal/serdes/serde_registration.generated.hpp"
 #include <servicelib/runtime/config/config.hpp>
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
@@ -31,6 +27,8 @@
 #include <servicelib/datasource/cron/libcron.hpp>
 #include <servicelib/datasink/localsink/custom.hpp>
 
+#include "analyticsservice/config/config.generated.hpp"
+#include "analyticsservice/internal/serdes/serde_registration.generated.hpp"
 #include <analyticsservice/internal/functions/analytics/count_order_processed.hpp>
 #include <analyticsservice/internal/functions/cron/analytics_schedule_source.hpp>
 #include <analyticsservice/internal/functions/cycleanalytics/advance_cycle_analytics.hpp>

@@ -1,14 +1,15 @@
 #pragma once
 
 #include <memory>
+#include <utility>
 
 #include <boost/asio/awaitable.hpp>
-#include <utility>
 
 #include <servicelib/runtime/common.hpp>
 #include <servicelib/runtime/config/endpoint_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
 #include <servicelib/runtime/schedule.hpp>
+
 #include <example/model/types/automation_job.hpp>
 
 

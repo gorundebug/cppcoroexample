@@ -4,6 +4,7 @@
 #include <string>
 
 #include <servicelib/runtime/serde/serde.hpp>
+
 #include <example/model/types/order_processed.hpp>
 
 namespace example::model::types::serde {

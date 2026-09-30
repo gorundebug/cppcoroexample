@@ -16,9 +16,7 @@
 #include <grpcpp/security/server_credentials.h>
 #include <grpcpp/server_builder.h>
 
-
 #include <servicelib/runtime/detail/coro_runtime.hpp>
-
 #include <servicelib/runtime/config/command_line.hpp>
 #include <servicelib/runtime/config/loader.hpp>
 #include <servicelib/runtime/environment/metrics/prometheus.hpp>

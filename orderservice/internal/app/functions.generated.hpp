@@ -2,7 +2,6 @@
 #pragma once
 
 #include <memory>
-
 #include <functional>
 #include <exception>
 #include <future>
@@ -18,10 +17,11 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/io_context.hpp>
+#include <handlers/order_service_api/processorder/requests.hpp>
+#include <handlers/order_service_api/processorder/responses.hpp>
+#include <proto/inventoryserviceapi/inventoryserviceapi.generated.grpc.pb.h>
+#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
 
-
-#include "orderservice/config/config.generated.hpp"
-#include "orderservice/internal/serdes/serde_registration.generated.hpp"
 #include <servicelib/runtime/config/config.hpp>
 #include <servicelib/runtime/serviceapp.hpp>
 #include <servicelib/transformation/streams.hpp>
@@ -30,11 +30,11 @@
 #include <servicelib/datasource/http/beast.hpp>
 #include <servicelib/datasink/kafka/librdkafka.hpp>
 
+#include "orderservice/config/config.generated.hpp"
+#include "orderservice/internal/serdes/serde_registration.generated.hpp"
 #include <example/model/types/order_item.hpp>
 #include <example/model/types/order_item_result.hpp>
 #include <example/model/types/order_processed.hpp>
-#include <handlers/order_service_api/processorder/requests.hpp>
-#include <handlers/order_service_api/processorder/responses.hpp>
 #include <orderservice/internal/functions/endpoint/order_processed_endpoint_sink.hpp>
 #include <orderservice/internal/functions/endpoint/process_order_item_sink.hpp>
 #include <orderservice/internal/functions/endpoint/process_order_source.hpp>
@@ -45,10 +45,6 @@
 #include <orderservice/internal/functions/order/soft_deadline.hpp>
 #include <orderservice/internal/types/order.hpp>
 #include <orderservice/internal/types/order_state.hpp>
-#include <proto/inventoryserviceapi/inventoryserviceapi.generated.grpc.pb.h>
-#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
-
-
 #include "orderservice/internal/app/makers.generated.hpp"
 
 namespace example::order_service::app {

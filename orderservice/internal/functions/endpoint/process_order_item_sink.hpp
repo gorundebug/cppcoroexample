@@ -1,21 +1,21 @@
 #pragma once
 
 #include <memory>
-
-#include <boost/asio/awaitable.hpp>
-
 #include <exception>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <variant>
 
+#include <boost/asio/awaitable.hpp>
+#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
+
 #include <servicelib/runtime/common.hpp>
 #include <servicelib/runtime/config/endpoint_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
+
 #include <example/model/types/order_item.hpp>
 #include <example/model/types/order_item_result.hpp>
-#include <proto/inventoryserviceapi/processorderitem/processorderitem.pb.h>
 
 
 namespace example::order_service::functions {

@@ -15,6 +15,7 @@
 #include <servicelib/runtime/base.hpp>
 #include <servicelib/runtime/config/stream_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
+
 #include <inventoryservice/internal/types/inventory_failure.hpp>
 #include <example/model/types/order_item_result.hpp>
 

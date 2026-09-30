@@ -3,9 +3,10 @@ package app
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/gorundebug/servicelib/runtime"
 	"github.com/gorundebug/servicelib/runtime/environment"
-	"net/http"
 
 	activity "github.com/gorundebug/cppcoroexample-automationservice/internal/functions/activity"
 	automation "github.com/gorundebug/cppcoroexample-automationservice/internal/functions/automation"

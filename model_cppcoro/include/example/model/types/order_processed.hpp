@@ -1,9 +1,9 @@
 #pragma once
 
-#include <boost/json.hpp>
-
 #include <cstddef>
 #include <string>
+
+#include <boost/json.hpp>
 
 namespace example::model::types {
 

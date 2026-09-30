@@ -12,8 +12,9 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "orderservice/config/custom_config.hpp"
 #include <servicelib/runtime/config/config.hpp>
+
+#include "orderservice/config/custom_config.hpp"
 
 namespace example::order_service::config {
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <servicelib/runtime/serde/serde.hpp>
+
 #include <inventoryservice/internal/types/inventory_failure.hpp>
 
 namespace example::inventory_service::types::serde {

@@ -1,12 +1,14 @@
 #pragma once
 
-#include <servicelib/runtime/base.hpp>
+#include <utility>
+
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/use_future.hpp>
-#include <utility>
+
+#include <servicelib/runtime/base.hpp>
 
 namespace example::order_service::functions::test {
 

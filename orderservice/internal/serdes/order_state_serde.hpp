@@ -1,11 +1,12 @@
 #pragma once
 
-#include <boost/json.hpp>
-
 #include <cstddef>
 #include <string>
 
+#include <boost/json.hpp>
+
 #include <servicelib/runtime/serde/serde.hpp>
+
 #include <orderservice/internal/types/order_state.hpp>
 
 namespace example::order_service::types::serde {

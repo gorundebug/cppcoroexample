@@ -1,5 +1,9 @@
+#include <chrono>
+#include <future>
+#include <optional>
+#include <thread>
+
 #include <gtest/gtest.h>
-#include "orderservice/internal/functions/endpoint/order_processed_endpoint_sink.hpp"
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/post.hpp>
@@ -7,10 +11,7 @@
 #include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/use_future.hpp>
 
-#include <chrono>
-#include <future>
-#include <optional>
-#include <thread>
+#include "orderservice/internal/functions/endpoint/order_processed_endpoint_sink.hpp"
 
 namespace example::order_service::functions {
 

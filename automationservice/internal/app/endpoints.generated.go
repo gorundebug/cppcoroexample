@@ -2,12 +2,12 @@
 package app
 
 import (
+	datasink "github.com/gorundebug/servicelib/datasink"
+	datasource "github.com/gorundebug/servicelib/datasource"
 	"github.com/gorundebug/servicelib/runtime"
 
 	activity "github.com/gorundebug/cppcoroexample-automationservice/internal/functions/activity"
 	cron "github.com/gorundebug/cppcoroexample-automationservice/internal/functions/cron"
-	datasink "github.com/gorundebug/servicelib/datasink"
-	datasource "github.com/gorundebug/servicelib/datasource"
 )
 
 type serviceHandlers struct {

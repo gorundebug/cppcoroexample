@@ -14,9 +14,7 @@
 #include <boost/asio/use_future.hpp>
 #include <boost/asio/signal_set.hpp>
 
-
 #include <servicelib/runtime/detail/coro_runtime.hpp>
-
 #include <servicelib/runtime/config/command_line.hpp>
 #include <servicelib/runtime/config/loader.hpp>
 #include <servicelib/runtime/environment/metrics/prometheus.hpp>

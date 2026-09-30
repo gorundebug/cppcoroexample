@@ -15,6 +15,7 @@
 #include <servicelib/runtime/base.hpp>
 #include <servicelib/runtime/config/stream_types.hpp>
 #include <servicelib/runtime/environment/environment.hpp>
+
 #include <analyticsservice/internal/types/analytics_event.hpp>
 #include <analyticsservice/internal/types/analytics_result.hpp>
 

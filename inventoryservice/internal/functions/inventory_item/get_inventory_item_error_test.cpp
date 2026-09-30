@@ -1,6 +1,8 @@
 #include <optional>
 #include <utility>
+
 #include <gtest/gtest.h>
+
 #include "inventoryservice/internal/functions/inventory_item/get_inventory_item_error.hpp"
 #include "inventoryservice/internal/functions/test_stream.hpp"
 
