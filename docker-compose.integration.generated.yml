@@ -62,4 +62,4 @@ services:
 
 volumes:
   cpp-cmake-build:
-    name: ${CPPCORO_BUILD_VOLUME:-cppcoroexample_cpp-cmake-build-epoll-v0.2.151}
+    name: ${CPPCORO_BUILD_VOLUME:-cppcoroexample_cpp-cmake-build-epoll-v0.2.152}
