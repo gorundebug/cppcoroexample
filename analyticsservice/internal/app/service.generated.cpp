@@ -45,25 +45,30 @@ ServiceGenerated::~ServiceGenerated() {
   releaseRuntime();
 }
 
-boost::asio::awaitable<void> ServiceGenerated::start() {
+boost::asio::awaitable<void> ServiceGenerated::start(servicelib::Context context) {
   std::exception_ptr startup_failure;
   try {
-    const servicelib::Context context;
+
     servicelib::config::RuntimeConfigRegistry::Publish(runtime_config_);
-    co_await serviceInit();
+    co_await serviceInit(context);
     makers_.initMakers(executor_);
     co_await customMakersInit(context);
     co_await initRuntime(context);
-    co_await servicelib::ServiceApp<ServiceGenerated, DataTypes>::start();
+    co_await servicelib::ServiceApp<ServiceGenerated, DataTypes>::start(context);
     lifecycle_started_ = true;
     servers_.http_server_->Start();
     // Dedicated listeners are owned and started by their data sources.
-    co_await serviceStarted();
+    co_await serviceStarted(context);
   } catch (...) {
     startup_failure = std::current_exception();
   }
   if (startup_failure) {
-    co_await stop();
+    try {
+      co_await stop(context);
+    } catch (...) {
+      // Shutdown retains its failed attempt and host for an explicit retry.
+      // Do not replace the primary startup failure with a cleanup failure.
+    }
     std::rethrow_exception(startup_failure);
   }
 }
@@ -107,112 +112,68 @@ boost::asio::awaitable<void> ServiceGenerated::initRuntime(servicelib::Context c
 }
 
 boost::asio::awaitable<void> ServiceGenerated::stop(servicelib::Context context) {
-  try {
-    auto lifetime = getShutdownLifetime();
-    if (!lifetime) {
-      // An externally owned service cannot safely outlive its caller.
-      co_await stopImpl(context);
-      co_return;
-    }
-    if (const auto config = getServiceConfigSnapshot();
-        config && config->shutdownTimeout > 0) {
-      context = context.bounded(
-          std::chrono::milliseconds{config->shutdownTimeout});
-    }
-    std::optional<servicelib::detail::ShutdownTask> task;
-    {
-      std::lock_guard lock(shutdown_mutex_);
-      if (!shutdown_task_) {
-        shutdown_task_.emplace([this, context, lifetime = std::move(lifetime)]() -> boost::asio::awaitable<void> {
-          co_await stopImpl(context);
-          co_await waitForShutdown();
-        });
-      }
-      task = shutdown_task_;
-    }
-    if (co_await task->wait(context)) {
-      if (auto error = co_await task->get()) std::rethrow_exception(error);
-    }
-  } catch (const std::exception& error) {
-    try {
-      getLogger().error("generated service shutdown failed",
-                       {servicelib::log::Field::Err(error.what())});
-    } catch (...) {
-    }
-  } catch (...) {
-    try {
-      getLogger().error("generated service shutdown failed");
-    } catch (...) {
-    }
+  auto lifetime = getShutdownLifetime();
+  if (!lifetime) {
+    co_await stopImpl(context);
+    co_return;
   }
+  if (const auto config = getServiceConfigSnapshot();
+      config && config->shutdownTimeout > 0) {
+    context = context.bounded(std::chrono::milliseconds{config->shutdownTimeout});
+  }
+  auto transition = co_await shutdown_transition_.acquire(context);
+  std::optional<servicelib::detail::ShutdownTask> task;
+  {
+    std::lock_guard lock(shutdown_mutex_);
+    task = shutdown_task_;
+  }
+  bool retry = !task;
+  if (task && task->ready()) retry = static_cast<bool>(co_await task->get(context));
+  if (retry) {
+    std::lock_guard lock(shutdown_mutex_);
+    // A failed wait must not destroy the host while transport callbacks still
+    // borrow its graph. Release only after a successful complete shutdown.
+    shutdown_lifetime_ = lifetime;
+    shutdown_task_.emplace([this, context, lifetime = std::move(lifetime)]() -> boost::asio::awaitable<void> {
+      co_await stopImpl(context);
+      co_await waitForShutdown(context);
+      shutdown_lifetime_.reset();
+    });
+    task = shutdown_task_;
+  }
+  transition.reset();
+  if (auto error = co_await task->get(context)) std::rethrow_exception(error);
 }
 
-boost::asio::awaitable<void> ServiceGenerated::waitStopped() {
+boost::asio::awaitable<void> ServiceGenerated::waitStopped(servicelib::Context context) {
   std::optional<servicelib::detail::ShutdownTask> task;
   {
     std::lock_guard lock(shutdown_mutex_);
     task = shutdown_task_;
   }
   if (task) {
-    if (auto error = co_await task->get()) std::rethrow_exception(error);
+    if (auto error = co_await task->get(context)) std::rethrow_exception(error);
   } else {
-    co_await waitForShutdown();
+    co_await waitForShutdown(context);
   }
 }
 
 boost::asio::awaitable<void> ServiceGenerated::stopImpl(servicelib::Context context) {
-  const auto report_failure =
-      [this](std::string_view operation, std::string_view error) noexcept {
-        try {
-          getLogger().error(
-              "generated service shutdown failed",
-              {servicelib::log::Field::Str("operation", std::string(operation)),
-               servicelib::log::Field::Err(error)});
-        } catch (...) {
-          // Logging must not escape a noexcept service destructor.
-        }
-      };
-
-  try {
-    if (lifecycle_started_) {
-      lifecycle_started_ = false;
-      co_await serviceStopping();
-    }
-  } catch (const std::exception& ex) {
-    report_failure("serviceStopping", ex.what());
-  } catch (...) {
-    report_failure("serviceStopping", "unknown exception");
+  if (lifecycle_started_) {
+    co_await serviceStopping(context);
+    lifecycle_started_ = false;
   }
-
   co_await stopRuntime(context);
 }
 
 boost::asio::awaitable<void> ServiceGenerated::stopRuntime(servicelib::Context context) {
-  const auto report_failure =
-      [this](std::string_view operation, std::string_view error) noexcept {
-        try {
-          getLogger().error(
-              "generated service shutdown failed",
-              {servicelib::log::Field::Str("operation", std::string(operation)),
-               servicelib::log::Field::Err(error)});
-        } catch (...) {
-          // Logging must not escape a noexcept service destructor.
-        }
-      };
-
   if (servers_.http_server_) {
-    co_await servers_.http_server_->Stop();
-    co_await servers_.http_server_->WaitStopped();
+    co_await servers_.http_server_->Stop(context);
+    co_await servers_.http_server_->WaitStopped(context);
   }
-  co_await clients_.stop();
+  co_await clients_.stop(context);
 
-  try {
-    co_await servicelib::ServiceApp<ServiceGenerated, DataTypes>::stop(context);
-  } catch (const std::exception& ex) {
-    report_failure("ServiceApp::stop", ex.what());
-  } catch (...) {
-    report_failure("ServiceApp::stop", "unknown exception");
-  }
+  co_await servicelib::ServiceApp<ServiceGenerated, DataTypes>::stop(context);
 }
 
 void ServiceGenerated::releaseRuntime() noexcept {

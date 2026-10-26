@@ -68,7 +68,7 @@ namespace example::analytics_service::app {
 class ServiceGenerated;
 
 struct ServiceClients final {
-  boost::asio::awaitable<void> stop() {
+  boost::asio::awaitable<void> stop([[maybe_unused]] servicelib::Context context) {
     co_return;
   }
 };

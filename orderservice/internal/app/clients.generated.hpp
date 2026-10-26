@@ -55,8 +55,8 @@ class ServiceGenerated;
 struct ServiceClients final {
   std::unique_ptr<servicelib::grpc_transport::callback::ClientPool<::inventoryserviceapi::InventoryServiceApi::Stub>> inventory_service_api_client;
   std::unique_ptr<servicelib::datasink::kafka::LibrdkafkaProducerClient> publish_order_processed_producer;
-  boost::asio::awaitable<void> stop() {
-    if (inventory_service_api_client) co_await inventory_service_api_client->Stop();
+  boost::asio::awaitable<void> stop([[maybe_unused]] servicelib::Context context) {
+    if (inventory_service_api_client) co_await inventory_service_api_client->Stop(context);
     co_return;
   }
 };

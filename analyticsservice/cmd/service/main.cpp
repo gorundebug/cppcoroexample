@@ -123,6 +123,7 @@ int main(int argc, char* argv[]) {
                                     *metrics, tracing.get());
     auto& service = *lifetime->service;
     service.setShutdownLifetime(lifetime);
+    const servicelib::Context lifecycle_context;
     auto shutdown_deadline = std::chrono::steady_clock::time_point::max();
     bool shutdown_deadline_started{};
     const auto begin_shutdown = [&](int exit_code) {
@@ -141,9 +142,9 @@ int main(int argc, char* argv[]) {
       begin_shutdown(EXIT_SUCCESS);
       loader.Stop();
       boost::asio::co_spawn(runtime.executor(),
-          service.stop(servicelib::Context{}.withDeadline(shutdown_deadline)),
+          service.stop(lifecycle_context.withDeadline(shutdown_deadline)),
           boost::asio::use_future).get();
-      boost::asio::co_spawn(runtime.executor(), service.waitStopped(),
+      boost::asio::co_spawn(runtime.executor(), service.waitStopped(lifecycle_context.withDeadline(shutdown_deadline)),
           boost::asio::use_future).get();
       lifetime->service.reset();
       const bool tracing_flushed = !tracing || tracing->forceFlush();
@@ -168,7 +169,7 @@ int main(int argc, char* argv[]) {
       begin_shutdown(EXIT_SUCCESS);
     });
     try {
-      boost::asio::co_spawn(runtime.executor(), service.start(), boost::asio::use_future).get();
+      boost::asio::co_spawn(runtime.executor(), service.start(lifecycle_context), boost::asio::use_future).get();
       loader.Start(std::chrono::seconds{5},
                    [](std::shared_ptr<const servicelib::config::RuntimeConfig>
                           next_config) {

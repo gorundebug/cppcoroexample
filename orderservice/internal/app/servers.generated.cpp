@@ -90,7 +90,7 @@ boost::asio::awaitable<void> ServiceServers::initInfrastructure(
   } catch (...) {
     if (!first_maker_error) first_maker_error = std::current_exception();
   }
-  maker_cancellation.request_stop();
+  // Successful makers retain this scope until their owner is cancelled.
   if (first_maker_error) std::rethrow_exception(first_maker_error);
 }
 

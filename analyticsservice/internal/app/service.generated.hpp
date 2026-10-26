@@ -29,9 +29,9 @@ class ServiceGenerated
                    servicelib::tracing::Tracing* tracing = nullptr);
   ~ServiceGenerated() override;
 
-  boost::asio::awaitable<void> start();
-  boost::asio::awaitable<void> stop(servicelib::Context context = {});
-  boost::asio::awaitable<void> waitStopped();
+  boost::asio::awaitable<void> start(servicelib::Context context);
+  boost::asio::awaitable<void> stop(servicelib::Context context);
+  boost::asio::awaitable<void> waitStopped(servicelib::Context context);
 
   servicelib::log::Logger& getLogger() override;
   servicelib::metrics::Metrics& getMetrics() override;
@@ -52,16 +52,16 @@ class ServiceGenerated
   ServiceFunctions functions_;
   virtual boost::asio::awaitable<void> customMakersInit(servicelib::Context) { co_return; }
   virtual boost::asio::awaitable<void> customFunctionsInit(servicelib::Context) { co_return; }
-  virtual boost::asio::awaitable<void> serviceInit() { co_return; }
-  virtual boost::asio::awaitable<void> serviceStarted() { co_return; }
-  virtual boost::asio::awaitable<void> serviceStopping() { co_return; }
+  virtual boost::asio::awaitable<void> serviceInit(servicelib::Context) { co_return; }
+  virtual boost::asio::awaitable<void> serviceStarted(servicelib::Context) { co_return; }
+  virtual boost::asio::awaitable<void> serviceStopping(servicelib::Context) { co_return; }
 
  private:
   friend struct ServiceServers;
   friend struct ServiceEndpoints;
   boost::asio::awaitable<void> initRuntime(servicelib::Context context);
   boost::asio::awaitable<void> stopImpl(servicelib::Context context);
-  boost::asio::awaitable<void> stopRuntime(servicelib::Context context = {});
+  boost::asio::awaitable<void> stopRuntime(servicelib::Context context);
   void releaseRuntime() noexcept;
   ServiceStreams streams_;
   ServiceBindings bindings_;
@@ -79,6 +79,8 @@ class ServiceGenerated
   servicelib::metrics::Metrics* metrics_;
   servicelib::tracing::Tracing* tracing_;
   bool lifecycle_started_{false};
+  servicelib::detail::LifecycleGate shutdown_transition_;
+  std::shared_ptr<void> shutdown_lifetime_;
   std::mutex shutdown_mutex_;
   std::optional<servicelib::detail::ShutdownTask> shutdown_task_;
 };

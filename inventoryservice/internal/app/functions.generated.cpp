@@ -102,7 +102,7 @@ boost::asio::awaitable<void> ServiceFunctions::initFunctions(
     } catch (...) {
       if (!first_maker_error) first_maker_error = std::current_exception();
     }
-    maker_cancellation.request_stop();
+    // Successful maker contexts retain the caller lifetime.
     if (first_maker_error) std::rethrow_exception(first_maker_error);
   }
   co_return;
