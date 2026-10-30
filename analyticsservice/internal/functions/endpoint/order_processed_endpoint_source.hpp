@@ -25,6 +25,12 @@ struct OrderProcessedEndpointSource final {
 
   int concurrency(auto&) const noexcept { return 0; }
 
+  boost::asio::awaitable<void> onError(
+      servicelib::MessageContext context, auto& stream,
+      std::exception_ptr error) const {
+    co_await stream.collectError(std::move(context), std::move(error));
+  }
+
   boost::asio::awaitable<servicelib::BeginResult<State>> beginRequest(
       servicelib::MessageContext context, auto&) const {
     co_return servicelib::BeginResult<State>{std::move(context), {}};

@@ -125,7 +125,7 @@ inline Config MakeConfig() {
     value.defaultCallSemantics = MakeCallSemanticsGroup(CallSemantics::kFunctionCall, "", 0, false);
     value.defaultGrpcTimeout = 0;
     value.environment = Environment::kUndefined;
-    value.golangVersion = "1.25.4";
+    value.golangVersion = "1.26.4";
     value.grpcHost = "0.0.0.0";
     value.grpcPort = 9202;
     value.httpHost = "0.0.0.0";
