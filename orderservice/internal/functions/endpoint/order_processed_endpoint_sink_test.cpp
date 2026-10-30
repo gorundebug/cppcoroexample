@@ -72,7 +72,7 @@ TEST_F(KafkaCoroutineSinkTest, PublishesOrderWithoutBlockingGraphWorkerAndDrains
     auto begin = co_await handler.beginRequest({}, stream);
     co_await handler.consumeMessage(begin.context, stream, begin.state, value, message);
     co_await handler.endRequest(begin.context, stream, {}, begin.state);
-    co_await deliveries.stopAndWait();
+    co_await deliveries.stopAndWait(servicelib::Context{});
   };
   run(operation());
   EXPECT_TRUE(separateThread);
@@ -127,7 +127,7 @@ TEST_F(KafkaCoroutineSinkTest, AsyncFailureReachesAwaitedDeliveryCallback) {
       co_await boost::asio::post(boost::asio::use_awaitable);
       co_return 41;
     });
-    co_await deliveries.stopAndWait();
+    co_await deliveries.stopAndWait(servicelib::Context{});
   };
   run(operation());
   EXPECT_TRUE(failed);
