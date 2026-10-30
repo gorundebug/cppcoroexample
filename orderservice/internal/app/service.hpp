@@ -13,9 +13,9 @@ class Service final : public ServiceGenerated {
  protected:
   boost::asio::awaitable<void> customMakersInit(servicelib::Context context) override;
   boost::asio::awaitable<void> customFunctionsInit(servicelib::Context context) override;
-  boost::asio::awaitable<void> serviceInit() override;
-  boost::asio::awaitable<void> serviceStarted() override;
-  boost::asio::awaitable<void> serviceStopping() override;
+  boost::asio::awaitable<void> serviceInit(servicelib::Context context) override;
+  boost::asio::awaitable<void> serviceStarted(servicelib::Context context) override;
+  boost::asio::awaitable<void> serviceStopping(servicelib::Context context) override;
 };
 
 }  // namespace example::order_service::app

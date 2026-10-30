@@ -14,8 +14,8 @@ boost::asio::awaitable<void> Service::customFunctionsInit(servicelib::Context co
   // Add only explicit post-construction customization here.
   co_return;
 }
-boost::asio::awaitable<void> Service::serviceInit() { co_return; }
-boost::asio::awaitable<void> Service::serviceStarted() { co_return; }
-boost::asio::awaitable<void> Service::serviceStopping() { co_return; }
+boost::asio::awaitable<void> Service::serviceInit(servicelib::Context) { co_return; }
+boost::asio::awaitable<void> Service::serviceStarted(servicelib::Context) { co_return; }
+boost::asio::awaitable<void> Service::serviceStopping(servicelib::Context) { co_return; }
 
 }  // namespace example::order_service::app
