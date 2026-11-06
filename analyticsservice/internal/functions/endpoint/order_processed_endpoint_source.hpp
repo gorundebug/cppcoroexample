@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <exception>
 #include <stdexcept>
 #include <string>
@@ -22,6 +23,10 @@ namespace example::analytics_service::functions {
 
 struct OrderProcessedEndpointSource final {
   using State = std::monostate;
+
+  // No externally restored durable state: retain broker-managed positions.
+  std::optional<servicelib::datasource::kafka::CheckpointOffsets> restoreCheckpoint(
+      servicelib::MessageContext, auto&) const { return std::nullopt; }
 
   int concurrency(auto&) const noexcept { return 0; }
 
