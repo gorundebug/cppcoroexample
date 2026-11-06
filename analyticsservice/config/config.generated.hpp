@@ -752,6 +752,7 @@ inline Config MakeConfig() {
     value.id = kAnalyticsOrdersEndpointId;
     value.name = "Analytics Orders";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "AnalyticsOrders";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -764,6 +765,7 @@ inline Config MakeConfig() {
     value.id = kAnalyticsPaymentsEndpointId;
     value.name = "Analytics Payments";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "AnalyticsPayments";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -794,6 +796,7 @@ inline Config MakeConfig() {
     value.id = kAnalyticsShipmentsEndpointId;
     value.name = "Analytics Shipments";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "AnalyticsShipments";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -806,6 +809,7 @@ inline Config MakeConfig() {
     value.id = kCycleAnalyticsInputEndpointId;
     value.name = "Cycle Analytics Input";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "CycleAnalyticsInput";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -818,6 +822,7 @@ inline Config MakeConfig() {
     value.id = kCycleAnalyticsResultEndpointId;
     value.name = "Cycle Analytics Result";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "CycleAnalyticsResult";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -830,6 +835,7 @@ inline Config MakeConfig() {
     value.id = kHighValueAnalyticsEndpointId;
     value.name = "High Value Analytics";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "HighValueAnalytics";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -842,6 +848,7 @@ inline Config MakeConfig() {
     value.id = kJoinedAnalyticsEndpointId;
     value.name = "Joined Analytics";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "JoinedAnalytics";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -872,6 +879,7 @@ inline Config MakeConfig() {
     value.id = kStandardAnalyticsEndpointId;
     value.name = "Standard Analytics";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "StandardAnalytics";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -884,6 +892,7 @@ inline Config MakeConfig() {
     value.id = kSubstreamAnalyticsInputEndpointId;
     value.name = "Substream Analytics Input";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "SubstreamAnalyticsInput";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -896,6 +905,7 @@ inline Config MakeConfig() {
     value.id = kSubstreamAnalyticsResultEndpointId;
     value.name = "Substream Analytics Result";
     value.idDataConnector = kAnalyticsFunctionsConnectorId;
+    value.enabled = true;
     value.functionName = "SubstreamAnalyticsResult";
     value.functionPackage = "endpoint";
     value.publicFunction = false;
@@ -1007,6 +1017,20 @@ inline YAML::Node FindConfigObject(const YAML::Node& root,
 
 inline void ApplyConfig(const YAML::Node& value, Config& config) {
   {
+    const auto object = FindConfigObject(value, "endpoints", "analyticsOrders");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.analyticsOrders.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "analyticsPayments");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.analyticsPayments.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
     const auto object = FindConfigObject(value, "endpoints", "analyticsSchedule");
     if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
       config.endpoints.analyticsSchedule.enabled =
@@ -1091,6 +1115,41 @@ inline void ApplyConfig(const YAML::Node& value, Config& config) {
     }
   }
   {
+    const auto object = FindConfigObject(value, "endpoints", "analyticsShipments");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.analyticsShipments.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "cycleAnalyticsInput");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.cycleAnalyticsInput.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "cycleAnalyticsResult");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.cycleAnalyticsResult.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "highValueAnalytics");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.highValueAnalytics.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "joinedAnalytics");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.joinedAnalytics.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
     const auto object = FindConfigObject(value, "dataConnectors", "orderEvents");
     if (const auto field = object["brokers"]; field.IsDefined() && !field.IsNull()) {
       config.dataConnectors.orderEvents.brokers =
@@ -1129,6 +1188,27 @@ inline void ApplyConfig(const YAML::Node& value, Config& config) {
     const auto object = FindConfigObject(value, "endpoints", "orderProcessed");
     if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
       config.endpoints.orderProcessed.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "standardAnalytics");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.standardAnalytics.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "substreamAnalyticsInput");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.substreamAnalyticsInput.enabled =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "substreamAnalyticsResult");
+    if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.substreamAnalyticsResult.enabled =
           servicelib::config::YamlValue(field).As<bool>();
     }
   }
@@ -1216,6 +1296,20 @@ inline int ParseEnvironmentInt(const char* name, const char* value) {
 }
 
 inline void ApplyEnvironment(Config& config) {
+  if (const auto* value = std::getenv("ANALYTICS_ORDERS_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in ANALYTICS_ORDERS_ENABLED");
+    }
+    config.endpoints.analyticsOrders.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("ANALYTICS_PAYMENTS_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in ANALYTICS_PAYMENTS_ENABLED");
+    }
+    config.endpoints.analyticsPayments.enabled = parsed == "true";
+  }
   if (const auto* value = std::getenv("ANALYTICS_SCHEDULE_ENABLED")) {
     const std::string_view parsed{value};
     if (parsed != "true" && parsed != "false") {
@@ -1265,6 +1359,41 @@ inline void ApplyEnvironment(Config& config) {
     config.services.analyticsService.httpPort =
         ParseEnvironmentInt("ANALYTICS_SERVICE_HTTP_PORT", value);
   }
+  if (const auto* value = std::getenv("ANALYTICS_SHIPMENTS_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in ANALYTICS_SHIPMENTS_ENABLED");
+    }
+    config.endpoints.analyticsShipments.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("CYCLE_ANALYTICS_INPUT_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in CYCLE_ANALYTICS_INPUT_ENABLED");
+    }
+    config.endpoints.cycleAnalyticsInput.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("CYCLE_ANALYTICS_RESULT_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in CYCLE_ANALYTICS_RESULT_ENABLED");
+    }
+    config.endpoints.cycleAnalyticsResult.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("HIGH_VALUE_ANALYTICS_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in HIGH_VALUE_ANALYTICS_ENABLED");
+    }
+    config.endpoints.highValueAnalytics.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("JOINED_ANALYTICS_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in JOINED_ANALYTICS_ENABLED");
+    }
+    config.endpoints.joinedAnalytics.enabled = parsed == "true";
+  }
   if (const auto* value = std::getenv("ORDER_EVENTS_BROKERS")) {
     config.dataConnectors.orderEvents.brokers = value;
   }
@@ -1288,6 +1417,27 @@ inline void ApplyEnvironment(Config& config) {
       throw std::invalid_argument("invalid boolean in ORDER_PROCESSED_ENABLED");
     }
     config.endpoints.orderProcessed.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("STANDARD_ANALYTICS_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in STANDARD_ANALYTICS_ENABLED");
+    }
+    config.endpoints.standardAnalytics.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("SUBSTREAM_ANALYTICS_INPUT_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in SUBSTREAM_ANALYTICS_INPUT_ENABLED");
+    }
+    config.endpoints.substreamAnalyticsInput.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("SUBSTREAM_ANALYTICS_RESULT_ENABLED")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in SUBSTREAM_ANALYTICS_RESULT_ENABLED");
+    }
+    config.endpoints.substreamAnalyticsResult.enabled = parsed == "true";
   }
   ApplyEnvironment(config.custom);
 }
