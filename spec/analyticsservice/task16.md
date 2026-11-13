@@ -2,6 +2,8 @@
 
 > Rules: [`spec/rules.md`](../rules.md)
 
+Paths and commands below are relative to the generated project root.
+
 | Field | Value |
 |-------|-------|
 | Language | `C++/Coro` |
@@ -22,15 +24,15 @@ Consumers decode the event and mark its Kafka message processed only after the p
 
 
 ## Stream types
-- Input: `OrderProcessed` — `model_cppcoro/include/example/model/types/order_processed.hpp`
-- Output: `OrderProcessed` — `model_cppcoro/include/example/model/types/order_processed.hpp`
+- Emits into graph: `OrderProcessed` — `model_cppcoro/include/example/model/types/order_processed.hpp`
+- Receives graph result: `OrderProcessed` — `model_cppcoro/include/example/model/types/order_processed.hpp`
 
 ## Checklist
 
 - [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `analyticsservice/internal/functions/endpoint/order_processed_endpoint_source.hpp` and preserve its generated contract
-- [ ] Inspect input type `OrderProcessed` in `model_cppcoro/include/example/model/types/order_processed.hpp`
-- [ ] Inspect output type `OrderProcessed` in `model_cppcoro/include/example/model/types/order_processed.hpp`
+- [ ] Inspect emitted message type `OrderProcessed` in `model_cppcoro/include/example/model/types/order_processed.hpp`
+- [ ] Inspect graph result type `OrderProcessed` in `model_cppcoro/include/example/model/types/order_processed.hpp`
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`

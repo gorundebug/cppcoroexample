@@ -2,6 +2,8 @@
 
 > Rules: [`spec/rules.md`](../rules.md)
 
+Paths and commands below are relative to the generated project root.
+
 | Field | Value |
 |-------|-------|
 | Language | `C++/Coro` |
@@ -30,15 +32,15 @@ If the inventory call fails, the caller returns a non-reserved PROCESSING_ERROR 
 
 
 ## Stream types
-- Input: `OrderItem` — `model_cppcoro/include/example/model/types/order_item.hpp`
-- Output: `OrderItemResult` — `model_cppcoro/include/example/model/types/order_item_result.hpp`
+- Emits into graph: `OrderItem` — `model_cppcoro/include/example/model/types/order_item.hpp`
+- Receives graph result: `OrderItemResult` — `model_cppcoro/include/example/model/types/order_item_result.hpp`
 
 ## Checklist
 
 - [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `inventoryservice/internal/functions/endpoint/process_order_item_source.hpp` and preserve its generated contract
-- [ ] Inspect input type `OrderItem` in `model_cppcoro/include/example/model/types/order_item.hpp`
-- [ ] Inspect output type `OrderItemResult` in `model_cppcoro/include/example/model/types/order_item_result.hpp`
+- [ ] Inspect emitted message type `OrderItem` in `model_cppcoro/include/example/model/types/order_item.hpp`
+- [ ] Inspect graph result type `OrderItemResult` in `model_cppcoro/include/example/model/types/order_item_result.hpp`
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`

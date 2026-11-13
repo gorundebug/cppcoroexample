@@ -2,6 +2,8 @@
 
 > Rules: [`spec/rules.md`](../rules.md)
 
+Paths and commands below are relative to the generated project root.
+
 | Field | Value |
 |-------|-------|
 | Language | `C++/Coro` |
@@ -31,15 +33,15 @@ Calculate the total from processed item prices, falling back to the submitted to
 
 
 ## Stream types
-- Input: `Order` — `orderservice/internal/types/order.hpp`
-- Output: `OrderState` — `orderservice/internal/types/order_state.hpp`
+- Emits into graph: `Order` — `orderservice/internal/types/order.hpp`
+- Receives graph result: `OrderState` — `orderservice/internal/types/order_state.hpp`
 
 ## Checklist
 
 - [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `orderservice/internal/functions/endpoint/process_order_source.hpp` and preserve its generated contract
-- [ ] Inspect input type `Order` in `orderservice/internal/types/order.hpp`
-- [ ] Inspect output type `OrderState` in `orderservice/internal/types/order_state.hpp`
+- [ ] Inspect emitted message type `Order` in `orderservice/internal/types/order.hpp`
+- [ ] Inspect graph result type `OrderState` in `orderservice/internal/types/order_state.hpp`
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`

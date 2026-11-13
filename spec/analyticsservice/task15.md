@@ -2,6 +2,8 @@
 
 > Rules: [`spec/rules.md`](../rules.md)
 
+Paths and commands below are relative to the generated project root.
+
 | Field | Value |
 |-------|-------|
 | Language | `C++/Coro` |
@@ -20,13 +22,13 @@ Create an analytics job message identifying the local scheduled firing.
 
 
 ## Stream types
-- Input: `AnalyticsKey` — `analyticsservice/internal/types/analytics_key.hpp`
+- Emits into graph: `AnalyticsKey` — `analyticsservice/internal/types/analytics_key.hpp`
 
 ## Checklist
 
 - [ ] Read [`spec/rules.md`](../rules.md), especially the `C++/Coro` section
 - [ ] Open `analyticsservice/internal/functions/cron/analytics_schedule_source.hpp` and preserve its generated contract
-- [ ] Inspect input type `AnalyticsKey` in `analyticsservice/internal/types/analytics_key.hpp`
+- [ ] Inspect emitted message type `AnalyticsKey` in `analyticsservice/internal/types/analytics_key.hpp`
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
