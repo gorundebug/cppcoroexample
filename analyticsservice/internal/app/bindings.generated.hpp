@@ -69,6 +69,8 @@ class ServiceGenerated;
 
 
 
+
+
   using WriteCycleAnalyticsCustomSinkEndpoint =
       servicelib::datasink::localsink::Endpoint<
           example::analytics_service::types::AnalyticsEvent, std::monostate, functions::CycleAnalyticsResultSink, std::exception_ptr>;

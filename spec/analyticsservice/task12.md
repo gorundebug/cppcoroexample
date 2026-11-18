@@ -33,6 +33,7 @@ Key the shipment analytics event for the multi-way join.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/multijoinanalytics/key_shipments_for_multi_join_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task12.md — KeyShipmentsForMultiJoin — C++/Coro — done`

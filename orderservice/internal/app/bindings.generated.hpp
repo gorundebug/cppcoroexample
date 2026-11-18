@@ -76,6 +76,8 @@ class ServiceGenerated;
 
 
 
+
+
   struct ProcessOrderItemSinkBinding final {
     using Endpoint = ProcessOrderItemGrpcSinkEndpoint;
     Endpoint* endpoint{};

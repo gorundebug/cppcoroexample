@@ -92,6 +92,10 @@ services:
       - app_net
 
 
+
+
+
+
   redpanda:
     image: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}/redpandadata/redpanda:v24.2.5
     restart: unless-stopped

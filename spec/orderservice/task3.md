@@ -35,6 +35,7 @@ Do not add item results at this stage; results received before the timeout are i
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `orderservice/internal/functions/order/map_to_order_state_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] orderservice/task3.md — MapToOrderState — C++/Coro — done`

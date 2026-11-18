@@ -33,6 +33,7 @@ Key the order analytics event by correlation key.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/joinanalytics/key_orders_for_join_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task8.md — KeyOrdersForJoin — C++/Coro — done`

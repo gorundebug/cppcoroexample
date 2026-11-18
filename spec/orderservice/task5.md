@@ -35,6 +35,7 @@ When no request deadline exists, use the configured duration itself. Never wait 
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `orderservice/internal/functions/order/soft_deadline_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] orderservice/task5.md — SoftDeadline — C++/Coro — done`

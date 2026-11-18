@@ -601,9 +601,30 @@ inline void ApplyConfig(const YAML::Node& value, Config& config) {
   }
   {
     const auto object = FindConfigObject(value, "endpoints", "orderProcessed");
+    if (const auto field = object["createTopic"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.orderProcessed.createTopic =
+          servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "orderProcessed");
     if (const auto field = object["enabled"]; field.IsDefined() && !field.IsNull()) {
       config.endpoints.orderProcessed.enabled =
           servicelib::config::YamlValue(field).As<bool>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "orderProcessed");
+    if (const auto field = object["partitions"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.orderProcessed.partitions =
+          servicelib::config::YamlValue(field).As<int>();
+    }
+  }
+  {
+    const auto object = FindConfigObject(value, "endpoints", "orderProcessed");
+    if (const auto field = object["topic"]; field.IsDefined() && !field.IsNull()) {
+      config.endpoints.orderProcessed.topic =
+          servicelib::config::YamlValue(field).As<std::string>();
     }
   }
   {
@@ -740,12 +761,26 @@ inline void ApplyEnvironment(Config& config) {
   if (const auto* value = std::getenv("ORDER_EVENTS_USERNAME")) {
     config.dataConnectors.orderEvents.username = value;
   }
+  if (const auto* value = std::getenv("ORDER_PROCESSED_CREATE_TOPIC")) {
+    const std::string_view parsed{value};
+    if (parsed != "true" && parsed != "false") {
+      throw std::invalid_argument("invalid boolean in ORDER_PROCESSED_CREATE_TOPIC");
+    }
+    config.endpoints.orderProcessed.createTopic = parsed == "true";
+  }
   if (const auto* value = std::getenv("ORDER_PROCESSED_ENABLED")) {
     const std::string_view parsed{value};
     if (parsed != "true" && parsed != "false") {
       throw std::invalid_argument("invalid boolean in ORDER_PROCESSED_ENABLED");
     }
     config.endpoints.orderProcessed.enabled = parsed == "true";
+  }
+  if (const auto* value = std::getenv("ORDER_PROCESSED_PARTITIONS")) {
+    config.endpoints.orderProcessed.partitions =
+        ParseEnvironmentInt("ORDER_PROCESSED_PARTITIONS", value);
+  }
+  if (const auto* value = std::getenv("ORDER_PROCESSED_TOPIC")) {
+    config.endpoints.orderProcessed.topic = value;
   }
   if (const auto* value = std::getenv("ORDER_SERVICE_DEFAULT_GRPC_TIMEOUT")) {
     config.services.orderService.defaultGrpcTimeout =

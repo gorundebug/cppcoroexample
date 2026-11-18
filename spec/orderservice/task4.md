@@ -35,6 +35,7 @@ Preserve each item's data and assign the parent order ID.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `orderservice/internal/functions/order/process_order_items_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] orderservice/task4.md — ProcessOrderItems — C++/Coro — done`

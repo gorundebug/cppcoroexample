@@ -35,6 +35,7 @@ Preserve the order and item identity and requested quantity, and record the fail
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `inventoryservice/internal/functions/inventory_item/get_inventory_item_error_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] inventoryservice/task2.md — GetInventoryItemError — C++/Coro — done`

@@ -52,6 +52,8 @@ class ServiceGenerated;
 
 
   struct ServiceEndpoints final {
+
+
     std::shared_ptr<ProcessInventoryItemGrpcSourceConsumer> process_inventory_item;
 
   void initDataSources(ServiceGenerated& service, const config::Config& cfg);

@@ -33,6 +33,7 @@ Increment the cycle counter while preserving the analytics event identity.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/cycleanalytics/advance_cycle_analytics_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task1.md — AdvanceCycleAnalytics — C++/Coro — done`

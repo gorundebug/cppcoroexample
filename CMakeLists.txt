@@ -32,7 +32,7 @@ set(CPPCOROSERVICELIB_REPOSITORY
     "https://github.com/gorundebug/cppcoroservicelib.git" CACHE STRING
     "Standalone cppcoroservicelib repository")
 set(CPPCOROSERVICELIB_REVISION
-    "v0.2.181" CACHE STRING
+    "v0.2.182" CACHE STRING
     "Pinned cppcoroservicelib revision")
 set(CPPCOROSERVICELIB_DEPENDENCY_MODE "CONAN" CACHE STRING
     "Dependency provider used for a source-tree cppcoroservicelib build")
@@ -41,6 +41,9 @@ set(CPPCOROSERVICELIB_BUILD_TESTS OFF CACHE BOOL
 
 set(CPPCOROSERVICELIB_ENABLE_GRPC ON
     CACHE BOOL "Build asio-grpc support" FORCE)
+set(CPPCOROSERVICELIB_ENABLE_PULSAR OFF CACHE BOOL "Build native Pulsar" FORCE)
+set(CPPCOROSERVICELIB_ENABLE_REDISSTREAMS OFF CACHE BOOL "Build native Redis Streams" FORCE)
+set(CPPCOROSERVICELIB_ENABLE_NATS OFF CACHE BOOL "Build native NATS" FORCE)
 set(CPPCOROSERVICELIB_ENABLE_KAFKA ON
     CACHE BOOL "Build librdkafka support" FORCE)
 set(CPPCOROSERVICELIB_ENABLE_OTEL ON

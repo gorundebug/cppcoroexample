@@ -34,6 +34,7 @@ Combine matching order, payment, and shipment analytics events.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/multijoinanalytics/multi_join_analytics_events_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task13.md — MultiJoinAnalyticsEvents — C++/Coro — done`

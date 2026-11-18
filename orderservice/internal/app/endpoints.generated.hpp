@@ -60,6 +60,8 @@ class ServiceGenerated;
 
 
   struct ServiceEndpoints final {
+
+
     std::shared_ptr<ProcessOrderItemGrpcSinkEndpoint> process_order_item;
     std::shared_ptr<ProcessOrderHTTPSourceConsumer> process_order;
     std::shared_ptr<PublishOrderProcessedKafkaSinkEndpoint> publish_order_processed;

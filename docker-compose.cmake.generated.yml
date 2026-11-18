@@ -10,6 +10,7 @@ services:
       args:
         DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
         DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+        DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
         DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
         DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
         DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
@@ -19,7 +20,7 @@ services:
         DEPENDENCY_APT_UBUNTU_SECURITY_URL: ${DEPENDENCY_APT_UBUNTU_SECURITY_URL:-}
         DEPENDENCY_APT_UBUNTU_PORTS_URL: ${DEPENDENCY_APT_UBUNTU_PORTS_URL:-}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.181}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.182}
       secrets:
         - dependency_conan_credential
     extra_hosts:
@@ -40,6 +41,7 @@ services:
       GIT_CONFIG_VALUE_1: ${GIT_CONFIG_VALUE_1:-}
       FETCH_CPP_DEPENDENCIES: ${FETCH_CPP_DEPENDENCIES:-OFF}
       DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+      DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
       DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
       DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
       DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
@@ -68,6 +70,7 @@ services:
       args:
         DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
         DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+        DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
         DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
         DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
         DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
@@ -82,7 +85,7 @@ services:
         CPPCORO_LTO: ${CPPCORO_LTO:-ON}
         EXAMPLE_PROFILE: ${EXAMPLE_PROFILE:-function-call}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.181}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.182}
       secrets:
         - dependency_conan_credential
   inventoryservice-runtime:
@@ -96,6 +99,7 @@ services:
       args:
         DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
         DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+        DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
         DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
         DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
         DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
@@ -110,7 +114,7 @@ services:
         CPPCORO_LTO: ${CPPCORO_LTO:-ON}
         EXAMPLE_PROFILE: ${EXAMPLE_PROFILE:-function-call}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.181}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.182}
       secrets:
         - dependency_conan_credential
   orderservice-runtime:
@@ -124,6 +128,7 @@ services:
       args:
         DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
         DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+        DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
         DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
         DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
         DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
@@ -138,13 +143,13 @@ services:
         CPPCORO_LTO: ${CPPCORO_LTO:-ON}
         EXAMPLE_PROFILE: ${EXAMPLE_PROFILE:-function-call}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.181}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.182}
       secrets:
         - dependency_conan_credential
 
 volumes:
   cpp-cmake-build:
-    name: ${CPPCORO_BUILD_VOLUME:-cppcoroexample_cpp-cmake-build-epoll-v0.2.181}
+    name: ${CPPCORO_BUILD_VOLUME:-cppcoroexample_cpp-cmake-build-epoll-v0.2.182}
   cpp-ccache:
     name: cppcoroexample_cpp-ccache
   cpp-conan2:

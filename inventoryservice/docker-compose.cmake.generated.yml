@@ -25,6 +25,7 @@ services:
         CMAKE_BUILD_PARALLEL_LEVEL: ${CMAKE_BUILD_PARALLEL_LEVEL:-}
         DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
         DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+        DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
         DEPENDENCY_CONAN_REMOTE_URL: ${DEPENDENCY_CONAN_REMOTE_URL:-}
         DEPENDENCY_CONAN_UPLOAD_URL: ${DEPENDENCY_CONAN_UPLOAD_URL:-}
         DEPENDENCY_CONAN_PUBLISH: ${DEPENDENCY_CONAN_PUBLISH:-0}
@@ -34,9 +35,9 @@ services:
         DEPENDENCY_APT_UBUNTU_SECURITY_URL: ${DEPENDENCY_APT_UBUNTU_SECURITY_URL:-}
         DEPENDENCY_APT_UBUNTU_PORTS_URL: ${DEPENDENCY_APT_UBUNTU_PORTS_URL:-}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.181}
-        module-inventory_service_api: ${MODULE_INVENTORY_SERVICE_API_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.181}
-        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.181}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.182}
+        module-inventory_service_api: ${MODULE_INVENTORY_SERVICE_API_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.182}
+        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.182}
       secrets:
         - dependency_conan_credential
     extra_hosts:
@@ -63,6 +64,7 @@ services:
       CPPCOROSERVICELIB_CONAN_LOCKFILE: ${CPPCOROSERVICELIB_CONAN_LOCKFILE:-}
       DEPENDENCY_CONAN_CREDENTIAL_FILE: /run/secrets/dependency_conan_credential
       DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+      DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
       CONAN_HOME: /conan
     volumes:
       - cpp-cmake-build:/workspace/build
@@ -87,6 +89,7 @@ services:
         CMAKE_BUILD_PARALLEL_LEVEL: ${CMAKE_BUILD_PARALLEL_LEVEL:-}
         DEPENDENCY_DOCKER_REGISTRY: ${DEPENDENCY_DOCKER_REGISTRY:-docker.io}
         DEPENDENCY_GITHUB_RAW_URL: ${DEPENDENCY_GITHUB_RAW_URL:-}
+        DEPENDENCY_APACHE_ARCHIVE_URL: ${DEPENDENCY_APACHE_ARCHIVE_URL:-https://archive.apache.org}
         DEPENDENCY_APT_UBUNTU_ARCHIVE_URL: ${DEPENDENCY_APT_UBUNTU_ARCHIVE_URL:-}
         DEPENDENCY_APT_UBUNTU_SECURITY_URL: ${DEPENDENCY_APT_UBUNTU_SECURITY_URL:-}
         DEPENDENCY_APT_UBUNTU_PORTS_URL: ${DEPENDENCY_APT_UBUNTU_PORTS_URL:-}
@@ -99,9 +102,9 @@ services:
         CPPCORO_LTO: ${CPPCORO_LTO:-ON}
         EXAMPLE_PROFILE: ${EXAMPLE_PROFILE:-function-call}
       additional_contexts:
-        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.181}
-        module-inventory_service_api: ${MODULE_INVENTORY_SERVICE_API_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.181}
-        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.181}
+        servicelib-source: ${SERVICELIB_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroservicelib.git#v0.2.182}
+        module-inventory_service_api: ${MODULE_INVENTORY_SERVICE_API_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.182}
+        module-model_cppcoro: ${MODULE_MODEL_CPPCORO_SOURCE_CONTEXT:-https://github.com/gorundebug/cppcoroexample.git#v0.2.182}
       secrets:
         - dependency_conan_credential
 

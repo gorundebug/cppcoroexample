@@ -31,6 +31,7 @@ Validate and record the result returned by the service-local SubStream example.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/endpoint/substream_analytics_result_sink_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task26.md — SubstreamAnalyticsResultSink — C++/Coro — done`

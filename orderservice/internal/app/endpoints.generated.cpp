@@ -46,6 +46,8 @@ void ServiceEndpoints::initDataSinks(ServiceGenerated& service, const config::Co
   bindings_.publish_order_processed.endpoint = endpoints_.publish_order_processed.get();
   service.registerDataSink(endpoints_.publish_order_processed);
 
+
+
 }
 
 void ServiceEndpoints::initDataSources(ServiceGenerated& service, const config::Config& cfg) {
@@ -70,6 +72,8 @@ void ServiceEndpoints::initDataSources(ServiceGenerated& service, const config::
   connectors_.order_service_api_source->addEndpoint(endpoints_.process_order->endpoint());
   connectors_.order_service_api_source->registerRoutes(*servers_.http_router_);
   service.registerDataSource(connectors_.order_service_api_source);
+
+
 
 
 

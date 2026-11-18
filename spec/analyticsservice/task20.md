@@ -31,6 +31,7 @@ Produce one deterministic analytics event that exercises the finite feedback cyc
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/endpoint/cycle_analytics_input_source_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task20.md — CycleAnalyticsInputSource — C++/Coro — done`

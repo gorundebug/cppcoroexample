@@ -96,6 +96,8 @@ class ServiceGenerated;
           example::analytics_service::types::AnalyticsEvent, std::monostate, functions::SubstreamAnalyticsInputSource, std::exception_ptr>;
 
   struct ServiceEndpoints final {
+
+
     std::shared_ptr<ConsumeOrderProcessedKafkaSourceEndpoint> consume_order_processed;
     std::shared_ptr<AnalyticsOrdersCustomSourceEndpoint> analytics_orders;
     std::shared_ptr<AnalyticsPaymentsCustomSourceEndpoint> analytics_payments;

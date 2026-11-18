@@ -1,5 +1,6 @@
 # Analytics Service
 
+
 Standalone generated C++ service. All compile, test and runtime commands
 use the generated Docker toolchain, so the host needs only Make, Docker and
 Docker Compose v2.
@@ -22,7 +23,6 @@ make docker-down-dev # [Docker] stop the standalone development stack
 make docker-clean   # [Docker] stop and remove standalone volumes/build state
 make help           # [host] list generated targets
 ```
-
 To limit concurrent CMake build jobs from outside the project, set a positive
 integer in the environment. This works with `make build`, `make test`, and
 `make docker-up`, including when invoked from the generated project root:

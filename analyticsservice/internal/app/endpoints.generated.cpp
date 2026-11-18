@@ -26,6 +26,8 @@ void ServiceEndpoints::initDataSinks(ServiceGenerated& service, const config::Co
 
 
 
+
+
   endpoints_.write_cycle_analytics =
       std::make_shared<WriteCycleAnalyticsCustomSinkEndpoint>(
           streams_.write_cycle_analytics.get(),
@@ -79,6 +81,8 @@ void ServiceEndpoints::initDataSources(ServiceGenerated& service, const config::
       service, *streams_.consume_order_processed, connectors_.consume_order_processed_consumer->client,
       *functions_.order_processed_endpoint_source);
   service.registerDataSource(endpoints_.consume_order_processed);
+
+
 
   endpoints_.analytics_orders = AnalyticsOrdersCustomSourceEndpoint::make(
       service, *streams_.analytics_orders,

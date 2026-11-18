@@ -33,6 +33,7 @@ Transform one callable SubStream input into its analytics result.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/substreamanalytics/build_substream_analytics_result_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task2.md — BuildSubstreamAnalyticsResult — C++/Coro — done`

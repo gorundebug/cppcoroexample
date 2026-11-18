@@ -33,6 +33,7 @@ Keep the terminal analytics event once its cycle counter reaches three.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/cycleanalytics/complete_cycle_analytics_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task3.md — CompleteCycleAnalytics — C++/Coro — done`

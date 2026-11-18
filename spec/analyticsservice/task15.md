@@ -32,6 +32,7 @@ Create an analytics job message identifying the local scheduled firing.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
+
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/cron/analytics_schedule_source_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task15.md — AnalyticsScheduleSource — C++/Coro — done`
