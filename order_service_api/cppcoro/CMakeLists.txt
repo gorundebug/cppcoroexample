@@ -22,7 +22,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     include(FetchContent)
     FetchContent_Declare(servicegen_servicelib
         GIT_REPOSITORY "https://github.com/gorundebug/cppcoroservicelib.git"
-        GIT_TAG "v0.2.182"
+        GIT_TAG "v0.2.183"
         GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(servicegen_servicelib)
   endif()

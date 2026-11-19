@@ -47,6 +47,7 @@
 
 
 
+
 namespace example::order_service::app {
 
 class ServiceGenerated;
@@ -72,6 +73,8 @@ class ServiceGenerated;
   using PublishOrderProcessedKafkaSinkEndpoint =
       servicelib::datasink::kafka::Endpoint<
           example::model::types::OrderProcessed, std::monostate, functions::OrderProcessedEndpointSink, std::exception_ptr>;
+
+
 
 
 

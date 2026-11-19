@@ -47,6 +47,7 @@
 #include <orderservice/internal/types/order_state.hpp>
 #include "orderservice/internal/app/streams.generated.hpp"
 
+
 namespace example::order_service::app {
 
 class ServiceGenerated;
@@ -60,6 +61,7 @@ class ServiceGenerated;
 
 
   struct ServiceEndpoints final {
+
 
 
     std::shared_ptr<ProcessOrderItemGrpcSinkEndpoint> process_order_item;

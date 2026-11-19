@@ -11,6 +11,7 @@
 
 namespace example::inventory_service::app {
 
+
 void ServiceEndpoints::initDataSources(ServiceGenerated& service, const config::Config& cfg) {
   auto& streams_ = service.streams_;
   auto& functions_ = service.functions_;

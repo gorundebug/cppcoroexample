@@ -97,6 +97,7 @@ boost::asio::awaitable<void> ServiceGenerated::initRuntime(servicelib::Context c
   substreams_.bind(streams_);
 
 
+
   endpoints_.initDataSources(*this, *config_snapshot);
   servicelib::http::RegisterStatusRoutes(
       *servers_.http_router_, *this, [this] {

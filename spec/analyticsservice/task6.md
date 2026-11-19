@@ -33,7 +33,6 @@ Invoke the service-local analytics SubStream and emit its returned result.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
-
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/substreamanalytics/invoke_analytics_substream_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task6.md — InvokeAnalyticsSubstream — C++/Coro — done`

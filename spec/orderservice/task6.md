@@ -45,7 +45,6 @@ Calculate the total from processed item prices, falling back to the submitted to
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
-
 - [ ] Implement meaningful assertions in `orderservice/internal/functions/endpoint/process_order_source_test.cpp`
 - [ ] Verify the endpoint/result lifecycle, including completion and error paths
 - [ ] Re-read this checklist

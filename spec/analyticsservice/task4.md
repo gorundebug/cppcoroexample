@@ -33,7 +33,6 @@ Keep intermediate analytics events whose cycle counter is below three.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
-
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/cycleanalytics/continue_cycle_analytics_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task4.md — ContinueCycleAnalytics — C++/Coro — done`

@@ -95,6 +95,7 @@ boost::asio::awaitable<void> ServiceGenerated::initRuntime(servicelib::Context c
   streams_.initStreams(*config_snapshot, *this);
   streams_.build(*config_snapshot, *this, functions_, bindings_);
   substreams_.bind(streams_);
+
   endpoints_.initDataSinks(*this, *config_snapshot);
 
   endpoints_.initDataSources(*this, *config_snapshot);

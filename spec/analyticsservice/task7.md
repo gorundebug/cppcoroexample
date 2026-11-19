@@ -34,7 +34,6 @@ Join matching order and payment analytics events and emit their combined total.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
-
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/joinanalytics/join_order_payment_analytics_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task7.md — JoinOrderPaymentAnalytics — C++/Coro — done`

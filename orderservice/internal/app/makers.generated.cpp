@@ -13,6 +13,7 @@ namespace example::order_service::app {
 
 void ServiceMakers::initMakers(boost::asio::any_io_executor executor, [[maybe_unused]] boost::asio::io_context* io_context) {
   auto& makers_ = *this;
+
   makers_.map_order_item_result_to_order_state = [](servicelib::Context context, servicelib::IServiceEnvironment& environment) {
     return functions::MakeMapOrderItemResultToOrderState(std::move(context), environment);
   };

@@ -30,6 +30,7 @@ class ServiceGenerated
                    servicelib::tracing::Tracing* tracing = nullptr);
   ~ServiceGenerated() override;
 
+
   boost::asio::awaitable<void> start(servicelib::Context context);
   boost::asio::awaitable<void> stop(servicelib::Context context);
   boost::asio::awaitable<void> waitStopped(servicelib::Context context);

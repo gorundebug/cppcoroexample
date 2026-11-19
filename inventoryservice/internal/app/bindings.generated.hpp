@@ -36,9 +36,12 @@
 
 
 
+
 namespace example::inventory_service::app {
 
 class ServiceGenerated;
+
+
 
 
 

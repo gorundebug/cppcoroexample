@@ -62,6 +62,7 @@
 
 
 
+
 namespace example::analytics_service::app {
 
 class ServiceGenerated;
@@ -86,6 +87,8 @@ class ServiceGenerated;
   using WriteSubstreamAnalyticsCustomSinkEndpoint =
       servicelib::datasink::localsink::Endpoint<
           example::analytics_service::types::AnalyticsResult, std::monostate, functions::SubstreamAnalyticsResultSink, std::exception_ptr>;
+
+
 
 
 

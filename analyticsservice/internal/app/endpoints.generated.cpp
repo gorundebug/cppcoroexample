@@ -11,6 +11,7 @@
 
 namespace example::analytics_service::app {
 
+
 void ServiceEndpoints::initDataSinks(ServiceGenerated& service, const config::Config& cfg) {
   auto& streams_ = service.streams_;
   auto& functions_ = service.functions_;

@@ -31,7 +31,6 @@ Produce one deterministic analytics event that invokes the service-local SubStre
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
-
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/endpoint/substream_analytics_input_source_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task25.md — SubstreamAnalyticsInputSource — C++/Coro — done`

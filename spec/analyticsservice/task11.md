@@ -33,7 +33,6 @@ Key the payment analytics event for the multi-way join.
 - [ ] Implement the C++ coroutine function object without retaining borrowed payload/context references
 - [ ] Await collector, sender and result operations according to their generated contracts
 - [ ] Run `./scripts/test.generated.sh`
-
 - [ ] Implement meaningful assertions in `analyticsservice/internal/functions/multijoinanalytics/key_payments_for_multi_join_test.cpp`
 - [ ] Re-read this checklist
 - [ ] Append to `spec/progress.md`: `- [x] analyticsservice/task11.md — KeyPaymentsForMultiJoin — C++/Coro — done`

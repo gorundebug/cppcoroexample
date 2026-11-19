@@ -62,6 +62,7 @@
 #include <example/model/types/order_processed.hpp>
 #include "analyticsservice/internal/app/streams.generated.hpp"
 
+
 namespace example::analytics_service::app {
 
 class ServiceGenerated;
@@ -96,6 +97,7 @@ class ServiceGenerated;
           example::analytics_service::types::AnalyticsEvent, std::monostate, functions::SubstreamAnalyticsInputSource, std::exception_ptr>;
 
   struct ServiceEndpoints final {
+
 
 
     std::shared_ptr<ConsumeOrderProcessedKafkaSourceEndpoint> consume_order_processed;

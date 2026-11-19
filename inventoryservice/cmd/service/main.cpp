@@ -9,6 +9,7 @@
 #include <string>
 #include <thread>
 
+
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/use_future.hpp>
@@ -50,6 +51,7 @@ void ArmShutdownDeadline(std::chrono::steady_clock::time_point deadline, int exi
 int main(int argc, char* argv[]) {
   try {
 
+    const servicelib::Context lifecycle_context;
     const auto options = servicelib::config::CommandLine::Parse(argc, argv);
     using Config = example::inventory_service::config::Config;
     namespace otel = servicelib::telemetry::opentelemetry_adapter;
@@ -57,6 +59,7 @@ int main(int argc, char* argv[]) {
     // A timed-out shutdown retains this complete host until admitted work
     // finishes. Destruction order keeps dependencies alive through the service.
     struct ServiceLifetime final {
+
       std::unique_ptr<servicelib::metrics::PrometheusMetrics> prometheus_metrics;
       std::unique_ptr<ServiceRuntime> runtime;
       std::unique_ptr<otel::OpenTelemetryLogger> otlp_logs;
@@ -141,8 +144,8 @@ int main(int argc, char* argv[]) {
                                     config, *service_logger,
                                     *metrics, tracing.get());
     auto& service = *lifetime->service;
+
     service.setShutdownLifetime(lifetime);
-    const servicelib::Context lifecycle_context;
     auto shutdown_deadline = std::chrono::steady_clock::time_point::max();
     bool shutdown_deadline_started{};
     const auto begin_shutdown = [&](int exit_code) {

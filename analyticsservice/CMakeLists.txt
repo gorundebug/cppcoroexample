@@ -34,12 +34,14 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
          "Fetch pinned cppcoroservicelib and missing contract modules" ON)
   set(CPPCOROSERVICELIB_REPOSITORY "https://github.com/gorundebug/cppcoroservicelib.git" CACHE STRING
       "Standalone cppcoroservicelib repository")
-  set(CPPCOROSERVICELIB_REVISION "v0.2.182" CACHE STRING
+  set(CPPCOROSERVICELIB_REVISION "v0.2.183" CACHE STRING
       "Pinned cppcoroservicelib revision")
   set(CPPCOROSERVICELIB_ENABLE_GRPC ON
       CACHE BOOL "Build asio-grpc support" FORCE)
   set(CPPCOROSERVICELIB_ENABLE_PULSAR OFF CACHE BOOL "Build native Pulsar" FORCE)
-  set(CPPCOROSERVICELIB_ENABLE_REDISSTREAMS OFF CACHE BOOL "Build native Redis Streams" FORCE)
+  set(SERVICELIB_ENABLE_S3 OFF CACHE BOOL "Build native S3 Query" FORCE)
+set(SERVICELIB_ENABLE_POSTGRESQL OFF CACHE BOOL "Build native PostgreSQL Query" FORCE)
+set(CPPCOROSERVICELIB_ENABLE_REDISSTREAMS OFF CACHE BOOL "Build native Redis Streams" FORCE)
 set(CPPCOROSERVICELIB_ENABLE_NATS OFF CACHE BOOL "Build native NATS" FORCE)
 set(CPPCOROSERVICELIB_ENABLE_KAFKA ON
       CACHE BOOL "Build librdkafka support" FORCE)
@@ -92,7 +94,7 @@ set(CPPCOROSERVICELIB_ENABLE_KAFKA ON
       include(FetchContent)
       FetchContent_Declare(servicegen_module_model
           GIT_REPOSITORY "https://github.com/gorundebug/cppcoroexample.git"
-          GIT_TAG "v0.2.182"
+          GIT_TAG "v0.2.183"
           SOURCE_SUBDIR "model_cppcoro/"
           GIT_SHALLOW FALSE
           GIT_PROGRESS TRUE)

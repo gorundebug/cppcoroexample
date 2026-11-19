@@ -13,6 +13,7 @@ namespace example::analytics_service::app {
 
 void ServiceMakers::initMakers(boost::asio::any_io_executor executor) {
   auto& makers_ = *this;
+
   makers_.advance_cycle_analytics = [](servicelib::Context context, servicelib::IServiceEnvironment& environment) {
     return functions::MakeAdvanceCycleAnalytics(std::move(context), environment);
   };

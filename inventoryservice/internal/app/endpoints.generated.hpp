@@ -36,6 +36,7 @@
 #include <inventoryservice/internal/types/inventory_failure.hpp>
 #include "inventoryservice/internal/app/streams.generated.hpp"
 
+
 namespace example::inventory_service::app {
 
 class ServiceGenerated;
@@ -52,6 +53,7 @@ class ServiceGenerated;
 
 
   struct ServiceEndpoints final {
+
 
 
     std::shared_ptr<ProcessInventoryItemGrpcSourceConsumer> process_inventory_item;
